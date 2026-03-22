@@ -3,115 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escala de Trabalho</title>
+<title>EscalaFácil / TurniLavoro</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
   :root {
-    --bg: #0f1117; --surface: #1a1d27; --surface2: #222638; --border: #2e3347;
-    --accent: #f5c518; --accent2: #4d9fff; --accent3: #3ecf8e; --danger: #ff5c5c;
-    --text: #e8eaf0; --text2: #8b90a8; --text3: #5a5f75;
-    --radius: 12px; --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --bg:#0f1117;--surface:#1a1d27;--surface2:#222638;--border:#2e3347;
+    --accent:#f5c518;--accent2:#4d9fff;--accent3:#3ecf8e;--danger:#ff5c5c;
+    --text:#e8eaf0;--text2:#8b90a8;--text3:#5a5f75;--radius:12px;--shadow:0 4px 24px rgba(0,0,0,0.4);
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.6; }
-  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 18px 24px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
-  .logo { display: flex; align-items: center; gap: 12px; }
-  .logo-icon { width: 40px; height: 40px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-  .logo-text { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
-  .logo-sub { font-size: 12px; color: var(--text2); font-weight: 400; }
-  .container { max-width: 960px; margin: 0 auto; padding: 32px 20px 80px; }
-  .steps { display: flex; gap: 8px; margin-bottom: 32px; overflow-x: auto; padding-bottom: 4px; }
-  .step { flex: 1; min-width: 120px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all 0.2s; text-align: center; }
-  .step.active { background: var(--accent); border-color: var(--accent); color: #000; }
-  .step.done { border-color: var(--accent3); color: var(--accent3); }
-  .step-num { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; }
-  .step-label { font-size: 13px; font-weight: 600; margin-top: 2px; }
-  .panel { display: none; animation: fadeIn 0.3s ease; }
-  .panel.active { display: block; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
-  .card-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
-  .card-desc { color: var(--text2); font-size: 14px; margin-bottom: 20px; }
-  .upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 48px 24px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
-  .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: rgba(245,197,24,0.05); }
-  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-  .upload-icon { font-size: 48px; margin-bottom: 12px; }
-  .upload-text { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
-  .upload-hint { font-size: 13px; color: var(--text2); }
-  .upload-status { margin-top: 16px; padding: 12px 16px; background: rgba(62,207,142,0.1); border: 1px solid var(--accent3); border-radius: 8px; color: var(--accent3); font-size: 14px; font-weight: 500; display: none; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.15s; }
-  .btn-primary { background: var(--accent); color: #000; }
-  .btn-primary:hover { background: #ffd633; transform: translateY(-1px); }
-  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-  .btn-secondary:hover { background: var(--border); }
-  .btn-success { background: var(--accent3); color: #000; }
-  .btn-success:hover { background: #5fffa8; }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
-  .btn-lg { padding: 16px 32px; font-size: 17px; }
-  input[type="text"], select, textarea { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: 15px; width: 100%; transition: border-color 0.2s; }
-  input[type="text"]:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent2); }
-  label { display: block; font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 6px; letter-spacing: 0.3px; text-transform: uppercase; }
-  .form-group { margin-bottom: 16px; }
-  .legend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; margin-top: 12px; }
-  .legend-item { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
-  .legend-code { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 15px; color: var(--accent); min-width: 28px; text-align: center; }
-  .legend-input { flex: 1; padding: 4px 8px; font-size: 13px; background: transparent; border: none; border-bottom: 1px solid var(--border); border-radius: 0; color: var(--text); }
-  .legend-input:focus { outline: none; border-color: var(--accent2); }
-  .name-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-  .name-chip { padding: 10px 18px; background: var(--surface2); border: 2px solid var(--border); border-radius: 30px; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
-  .name-chip:hover { border-color: var(--accent2); color: var(--accent2); }
-  .name-chip.selected { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
-  .schedule-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
-  .schedule-table th { background: var(--surface2); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); border-bottom: 1px solid var(--border); }
-  .schedule-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  .schedule-table tr:last-child td { border-bottom: none; }
-  .schedule-table tr:hover td { background: rgba(255,255,255,0.02); }
-  .day-num { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 18px; color: var(--accent2); width: 50px; }
-  .day-name { color: var(--text2); font-size: 13px; }
-  .shift-code { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 16px; color: var(--accent); padding: 4px 10px; background: rgba(245,197,24,0.1); border-radius: 6px; display: inline-block; }
-  .shift-time { font-weight: 500; font-size: 15px; }
-  .tag-folga { padding: 3px 10px; background: rgba(139,144,168,0.15); border-radius: 20px; font-size: 12px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-  .export-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
-  .export-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; }
-  .export-card:hover { border-color: var(--accent2); transform: translateY(-2px); box-shadow: var(--shadow); }
-  .export-icon { font-size: 36px; margin-bottom: 10px; }
-  .export-name { font-weight: 600; font-size: 15px; }
-  .export-desc { font-size: 12px; color: var(--text2); margin-top: 4px; }
-  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 24px; }
-  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
-  .alert { padding: 14px 18px; border-radius: 8px; font-size: 14px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
-  .alert-info { background: rgba(77,159,255,0.1); border: 1px solid rgba(77,159,255,0.3); color: var(--accent2); }
-  .alert-success { background: rgba(62,207,142,0.1); border: 1px solid rgba(62,207,142,0.3); color: var(--accent3); }
-  .alert-warn { background: rgba(245,197,24,0.1); border: 1px solid rgba(245,197,24,0.3); color: var(--accent); }
-  .nav-actions { display: flex; gap: 12px; justify-content: space-between; margin-top: 24px; flex-wrap: wrap; }
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; max-width: 480px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
-  .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-  .modal-body { color: var(--text2); font-size: 15px; margin-bottom: 24px; white-space: pre-line; }
-  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
-  .loading { display: none; text-align: center; padding: 40px; }
-  .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { color: var(--text2); font-size: 15px; }
-  .history-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s; }
-  .history-item:hover { border-color: var(--accent2); }
-  .history-icon { font-size: 24px; }
-  .history-info { flex: 1; }
-  .history-name { font-weight: 600; }
-  .history-meta { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .badge { padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
-  .badge-yellow { background: rgba(245,197,24,0.15); color: var(--accent); }
-  .badge-blue { background: rgba(77,159,255,0.15); color: var(--accent2); }
-  .badge-green { background: rgba(62,207,142,0.15); color: var(--accent3); }
-  .manual-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
-  .manual-section h4 { font-size: 14px; color: var(--text2); margin-bottom: 10px; }
-  .text-sm { font-size: 13px; color: var(--text2); }
-  .highlight-row td { background: rgba(245,197,24,0.04) !important; }
-  @media (max-width: 600px) {
-    .steps { gap: 6px; } .step { min-width: 90px; padding: 10px 10px; } .step-label { font-size: 11px; }
-    .export-grid { grid-template-columns: 1fr 1fr; } .btn-lg { padding: 14px 20px; font-size: 15px; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:16px;line-height:1.6;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-icon{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .logo-text{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.5px;}
+  .logo-sub{font-size:12px;color:var(--text2);}
+  /* LANGUAGE SWITCHER */
+  .lang-switcher{display:flex;gap:6px;align-items:center;}
+  .lang-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text2);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+  .lang-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+  .lang-btn.active{background:var(--accent);border-color:var(--accent);color:#000;}
+  .lang-flag{font-size:18px;}
+  .container{max-width:960px;margin:0 auto;padding:32px 20px 80px;}
+  .steps{display:flex;gap:8px;margin-bottom:32px;overflow-x:auto;padding-bottom:4px;}
+  .step{flex:1;min-width:120px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.2s;text-align:center;}
+  .step.active{background:var(--accent);border-color:var(--accent);color:#000;}
+  .step.done{border-color:var(--accent3);color:var(--accent3);}
+  .step-num{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;opacity:0.7;}
+  .step-label{font-size:13px;font-weight:600;margin-top:2px;}
+  .panel{display:none;animation:fadeIn 0.3s ease;}
+  .panel.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+  .card-title{font-size:18px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+  .card-desc{color:var(--text2);font-size:14px;margin-bottom:20px;}
+  .upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:48px 24px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;}
+  .upload-zone:hover,.upload-zone.drag-over{border-color:var(--accent);background:rgba(245,197,24,0.05);}
+  .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .upload-icon{font-size:48px;margin-bottom:12px;}
+  .upload-text{font-size:18px;font-weight:600;margin-bottom:6px;}
+  .upload-hint{font-size:13px;color:var(--text2);}
+  .upload-status{margin-top:16px;padding:12px 16px;background:rgba(62,207,142,0.1);border:1px solid var(--accent3);border-radius:8px;color:var(--accent3);font-size:14px;font-weight:500;display:none;}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border:none;border-radius:8px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.15s;}
+  .btn-primary{background:var(--accent);color:#000;}
+  .btn-primary:hover{background:#ffd633;transform:translateY(-1px);}
+  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+  .btn-secondary:hover{background:var(--border);}
+  .btn-success{background:var(--accent3);color:#000;}
+  .btn-success:hover{background:#5fffa8;}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important;}
+  .btn-lg{padding:16px 32px;font-size:17px;}
+  input[type="text"],select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:inherit;font-size:15px;width:100%;transition:border-color 0.2s;}
+  input[type="text"]:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2);}
+  label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:0.3px;text-transform:uppercase;}
+  .form-group{margin-bottom:16px;}
+  .legend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:12px;}
+  .legend-item{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;}
+  .legend-code{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;color:var(--accent);min-width:28px;text-align:center;}
+  .legend-input{flex:1;padding:4px 8px;font-size:13px;background:transparent;border:none;border-bottom:1px solid var(--border);border-radius:0;color:var(--text);}
+  .legend-input:focus{outline:none;border-color:var(--accent2);}
+  .name-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+  .name-chip{padding:10px 18px;background:var(--surface2);border:2px solid var(--border);border-radius:30px;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.15s;}
+  .name-chip:hover{border-color:var(--accent2);color:var(--accent2);}
+  .name-chip.selected{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;}
+  .schedule-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px;}
+  .schedule-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text2);border-bottom:1px solid var(--border);}
+  .schedule-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  .schedule-table tr:last-child td{border-bottom:none;}
+  .schedule-table tr:hover td{background:rgba(255,255,255,0.02);}
+  .day-num{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:18px;color:var(--accent2);}
+  .day-name{color:var(--text2);font-size:13px;}
+  .shift-code{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--accent);padding:4px 10px;background:rgba(245,197,24,0.1);border-radius:6px;display:inline-block;}
+  .shift-time{font-weight:500;font-size:15px;}
+  .tag-folga{padding:3px 10px;background:rgba(139,144,168,0.15);border-radius:20px;font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+  .export-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:16px;}
+  .export-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;}
+  .export-card:hover{border-color:var(--accent2);transform:translateY(-2px);box-shadow:var(--shadow);}
+  .export-icon{font-size:36px;margin-bottom:10px;}
+  .export-name{font-weight:600;font-size:15px;}
+  .export-desc{font-size:12px;color:var(--text2);margin-top:4px;}
+  .progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:24px;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;}
+  .alert{padding:14px 18px;border-radius:8px;font-size:14px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;}
+  .alert-info{background:rgba(77,159,255,0.1);border:1px solid rgba(77,159,255,0.3);color:var(--accent2);}
+  .alert-success{background:rgba(62,207,142,0.1);border:1px solid rgba(62,207,142,0.3);color:var(--accent3);}
+  .alert-warn{background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.3);color:var(--accent);}
+  .nav-actions{display:flex;gap:12px;justify-content:space-between;margin-top:24px;flex-wrap:wrap;}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+  .modal-title{font-size:20px;font-weight:700;margin-bottom:8px;}
+  .modal-body{color:var(--text2);font-size:15px;margin-bottom:24px;white-space:pre-line;}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+  .loading{display:none;text-align:center;padding:40px;}
+  .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-text{color:var(--text2);font-size:15px;}
+  .history-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:border-color 0.2s;}
+  .history-item:hover{border-color:var(--accent2);}
+  .history-icon{font-size:24px;}
+  .history-info{flex:1;}
+  .history-name{font-weight:600;}
+  .history-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+  .badge{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+  .badge-yellow{background:rgba(245,197,24,0.15);color:var(--accent);}
+  .badge-blue{background:rgba(77,159,255,0.15);color:var(--accent2);}
+  .manual-section{margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
+  .manual-section h4{font-size:14px;color:var(--text2);margin-bottom:10px;}
+  .text-sm{font-size:13px;color:var(--text2);}
+  .highlight-row td{background:rgba(245,197,24,0.04)!important;}
+  @media(max-width:600px){
+    .steps{gap:6px;}.step{min-width:90px;padding:10px;}.step-label{font-size:11px;}
+    .export-grid{grid-template-columns:1fr 1fr;}.btn-lg{padding:14px 20px;font-size:15px;}
+    .lang-btn span.lang-label{display:none;}
   }
 </style>
 </head>
@@ -120,140 +125,140 @@
   <div class="logo">
     <div class="logo-icon">📅</div>
     <div>
-      <div class="logo-text">EscalaFácil</div>
-      <div class="logo-sub">Importador de Escala de Trabalho</div>
+      <div class="logo-text" id="logoText">EscalaFácil</div>
+      <div class="logo-sub" id="logoSub">Importador de Escala de Trabalho</div>
     </div>
+  </div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" id="btnPT" onclick="setLang('pt')">
+      <span class="lang-flag">🇧🇷</span>
+      <span class="lang-label">Português</span>
+    </button>
+    <button class="lang-btn" id="btnIT" onclick="setLang('it')">
+      <span class="lang-flag">🇮🇹</span>
+      <span class="lang-label">Italiano</span>
+    </button>
   </div>
 </header>
 <div class="container">
-  <div class="steps" id="steps">
-    <div class="step active" data-step="1" onclick="goToStep(1)"><div class="step-num">Passo 1</div><div class="step-label">📎 Importar PDF</div></div>
-    <div class="step" data-step="2" onclick="goToStep(2)"><div class="step-num">Passo 2</div><div class="step-label">🔤 Tabela de Turnos</div></div>
-    <div class="step" data-step="3" onclick="goToStep(3)"><div class="step-num">Passo 3</div><div class="step-label">👤 Escolher Nome</div></div>
-    <div class="step" data-step="4" onclick="goToStep(4)"><div class="step-num">Passo 4</div><div class="step-label">📋 Ver Escala</div></div>
-    <div class="step" data-step="5" onclick="goToStep(5)"><div class="step-num">Passo 5</div><div class="step-label">📆 Exportar</div></div>
-  </div>
+  <div class="steps" id="stepsBar"></div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
   <!-- STEP 1 -->
   <div class="panel active" id="panel-1">
     <div class="card">
-      <div class="card-title">📎 Importar Escala (PDF)</div>
-      <div class="card-desc">Selecione o PDF da escala de trabalho. O sistema irá ler o conteúdo automaticamente.</div>
+      <div class="card-title" id="t-s1-title"></div>
+      <div class="card-desc" id="t-s1-desc"></div>
       <div class="upload-zone" id="uploadZone">
         <input type="file" id="pdfFile" accept=".pdf" onchange="handlePDFUpload(this)">
         <div class="upload-icon">📄</div>
-        <div class="upload-text">Clique aqui para escolher o PDF</div>
-        <div class="upload-hint">ou arraste e solte o arquivo aqui</div>
+        <div class="upload-text" id="t-upload-text"></div>
+        <div class="upload-hint" id="t-upload-hint"></div>
       </div>
       <div class="upload-status" id="uploadStatus"></div>
-      <div class="loading" id="pdfLoading"><div class="spinner"></div><div class="loading-text">Lendo o PDF, aguarde...</div></div>
+      <div class="loading" id="pdfLoading"><div class="spinner"></div><div class="loading-text" id="t-loading"></div></div>
     </div>
-    <div class="card" id="manualInputCard">
-      <div class="card-title">✏️ Ou cole o texto manualmente</div>
-      <div class="card-desc">Se o PDF não funcionar corretamente, copie e cole o conteúdo da escala abaixo.</div>
+    <div class="card">
+      <div class="card-title" id="t-manual-title"></div>
+      <div class="card-desc" id="t-manual-desc"></div>
       <div class="form-group">
-        <label>Texto da escala (cole aqui)</label>
-        <textarea id="manualText" rows="8" placeholder="Cole aqui o conteúdo da escala...&#10;&#10;Exemplo:&#10;FULANO DA SILVA&#10;01 A  02 B  03 C  04 F  05 A..."></textarea>
+        <label id="t-manual-label"></label>
+        <textarea id="manualText" rows="8"></textarea>
       </div>
       <div class="form-group">
-        <label>Mês e Ano da Escala</label>
+        <label id="t-month-label"></label>
         <input type="month" id="scheduleMonth" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:inherit;font-size:15px;width:auto;">
       </div>
-      <button class="btn btn-secondary" onclick="parseManualText()">🔍 Processar Texto</button>
+      <button class="btn btn-secondary" onclick="parseManualText()" id="t-process-btn"></button>
     </div>
     <div class="card" id="historyCard" style="display:none">
-      <div class="card-title">🕐 Escalas Importadas Anteriormente</div>
+      <div class="card-title" id="t-history-title"></div>
       <div id="historyList"></div>
     </div>
-    <div class="nav-actions"><span></span><button class="btn btn-primary" onclick="goToStep(2)">Próximo: Tabela de Turnos →</button></div>
+    <div class="nav-actions"><span></span><button class="btn btn-primary" onclick="goToStep(2)" id="t-next1"></button></div>
   </div>
   <!-- STEP 2 -->
   <div class="panel" id="panel-2">
     <div class="card">
-      <div class="card-title">🔤 Tabela de Turnos</div>
-      <div class="card-desc">Configure o horário de cada letra. Já pré-preenchida com os horários da tabela de referência.</div>
-      <div class="alert alert-info">ℹ️ <span>Os horários já foram configurados com base na tabela de referência. Verifique e edite se necessário.</span></div>
+      <div class="card-title" id="t-s2-title"></div>
+      <div class="card-desc" id="t-s2-desc"></div>
+      <div class="alert alert-info">ℹ️ <span id="t-s2-alert"></span></div>
       <div id="legendGrid" class="legend-grid"></div>
       <div class="manual-section">
-        <h4>Adicionar nova letra personalizada:</h4>
+        <h4 id="t-add-code-label"></h4>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input type="text" id="newCode" placeholder="Ex: Z1" style="width:80px">
-          <input type="text" id="newTime" placeholder="Ex: 08:00-16:00" style="flex:1;min-width:160px">
-          <button class="btn btn-secondary" onclick="addLegendItem()">+ Adicionar</button>
+          <input type="text" id="newCode" style="width:80px">
+          <input type="text" id="newTime" style="flex:1;min-width:160px">
+          <button class="btn btn-secondary" onclick="addLegendItem()" id="t-add-btn"></button>
         </div>
       </div>
     </div>
     <div class="nav-actions">
-      <button class="btn btn-secondary" onclick="goToStep(1)">← Voltar</button>
-      <button class="btn btn-primary" onclick="goToStep(3)">Próximo: Escolher Nome →</button>
+      <button class="btn btn-secondary" onclick="goToStep(1)" id="t-back2"></button>
+      <button class="btn btn-primary" onclick="goToStep(3)" id="t-next2"></button>
     </div>
   </div>
   <!-- STEP 3 -->
   <div class="panel" id="panel-3">
     <div class="card">
-      <div class="card-title">👤 Selecione o Nome do Funcionário</div>
-      <div class="card-desc">Escolha de qual pessoa você quer ver a escala.</div>
-      <div id="noNamesAlert" class="alert alert-warn" style="display:none">⚠️ <span>Nenhum nome encontrado. Volte ao passo 1 e importe um PDF ou insira o texto manualmente.</span></div>
-      <div id="nameListContainer">
-        <div class="form-group"><label>Buscar nome</label><input type="text" id="nameSearch" placeholder="Digite para filtrar..." oninput="filterNames(this.value)"></div>
+      <div class="card-title" id="t-s3-title"></div>
+      <div class="card-desc" id="t-s3-desc"></div>
+      <div id="noNamesAlert" class="alert alert-warn" style="display:none">⚠️ <span id="t-no-names"></span></div>
+      <div>
+        <div class="form-group"><label id="t-search-label"></label><input type="text" id="nameSearch" oninput="filterNames(this.value)"></div>
         <div class="name-list" id="nameList"></div>
       </div>
       <div class="manual-section">
-        <h4>Não encontrou o nome? Adicione manualmente:</h4>
+        <h4 id="t-add-name-label"></h4>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input type="text" id="manualName" placeholder="Nome completo" style="flex:1">
-          <button class="btn btn-secondary" onclick="addManualName()">+ Adicionar</button>
+          <input type="text" id="manualName" style="flex:1">
+          <button class="btn btn-secondary" onclick="addManualName()" id="t-add-name-btn"></button>
         </div>
       </div>
     </div>
     <div class="nav-actions">
-      <button class="btn btn-secondary" onclick="goToStep(2)">← Voltar</button>
-      <button class="btn btn-primary" id="btnToStep4" onclick="goToStep(4)" disabled>Próximo: Ver Escala →</button>
+      <button class="btn btn-secondary" onclick="goToStep(2)" id="t-back3"></button>
+      <button class="btn btn-primary" id="btnToStep4" onclick="goToStep(4)" disabled id="t-next3"></button>
     </div>
   </div>
   <!-- STEP 4 -->
   <div class="panel" id="panel-4">
     <div class="card">
-      <div class="card-title">📋 Escala de <span id="selectedNameDisplay">—</span></div>
-      <div class="card-desc" id="scheduleSubtitle">Confira os turnos antes de exportar.</div>
+      <div class="card-title">📋 <span id="t-s4-title"></span> <span id="selectedNameDisplay">—</span></div>
+      <div class="card-desc" id="scheduleSubtitle"></div>
       <div id="scheduleStats" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px"></div>
       <div style="overflow-x:auto">
-        <table class="schedule-table" id="scheduleTable">
-          <thead><tr><th>Dia</th><th>Dia da Semana</th><th>Código</th><th>Horário</th></tr></thead>
+        <table class="schedule-table">
+          <thead><tr><th id="t-th-day"></th><th id="t-th-weekday"></th><th id="t-th-code"></th><th id="t-th-time"></th></tr></thead>
           <tbody id="scheduleBody"></tbody>
         </table>
       </div>
-      <div id="noScheduleMsg" class="alert alert-warn" style="display:none;margin-top:16px">⚠️ <span>Nenhum dado de escala encontrado para esta pessoa.</span></div>
+      <div id="noScheduleMsg" class="alert alert-warn" style="display:none;margin-top:16px">⚠️ <span id="t-no-schedule"></span></div>
     </div>
     <div class="nav-actions">
-      <button class="btn btn-secondary" onclick="goToStep(3)">← Voltar</button>
-      <button class="btn btn-primary btn-lg" onclick="goToStep(5)">Próximo: Exportar para Calendário →</button>
+      <button class="btn btn-secondary" onclick="goToStep(3)" id="t-back4"></button>
+      <button class="btn btn-primary btn-lg" onclick="goToStep(5)" id="t-next4"></button>
     </div>
   </div>
   <!-- STEP 5 -->
   <div class="panel" id="panel-5">
     <div class="card">
-      <div class="card-title">📆 Exportar para o Calendário</div>
-      <div class="card-desc">Escolha como deseja adicionar os eventos de turno ao calendário.</div>
-      <div class="alert alert-success">✅ <span id="exportSummary">Pronto para exportar!</span></div>
+      <div class="card-title" id="t-s5-title"></div>
+      <div class="card-desc" id="t-s5-desc"></div>
+      <div class="alert alert-success">✅ <span id="exportSummary"></span></div>
       <div class="export-grid">
-        <div class="export-card" onclick="exportICS()"><div class="export-icon">📥</div><div class="export-name">Baixar arquivo .ics</div><div class="export-desc">Funciona em iPhone, Android, Outlook e Google Calendar</div></div>
-        <div class="export-card" onclick="exportGoogleCalendar()"><div class="export-icon">🗓️</div><div class="export-name">Google Calendar</div><div class="export-desc">Abre cada evento no Google Calendar</div></div>
-        <div class="export-card" onclick="copyToClipboard()"><div class="export-icon">📋</div><div class="export-name">Copiar como texto</div><div class="export-desc">Cole em WhatsApp, e-mail ou onde quiser</div></div>
-        <div class="export-card" onclick="printSchedule()"><div class="export-icon">🖨️</div><div class="export-name">Imprimir / PDF</div><div class="export-desc">Imprima ou salve como PDF</div></div>
+        <div class="export-card" onclick="exportICS()"><div class="export-icon">📥</div><div class="export-name" id="t-exp1-name"></div><div class="export-desc" id="t-exp1-desc"></div></div>
+        <div class="export-card" onclick="exportGoogleCalendar()"><div class="export-icon">🗓️</div><div class="export-name">Google Calendar</div><div class="export-desc" id="t-exp2-desc"></div></div>
+        <div class="export-card" onclick="copyToClipboard()"><div class="export-icon">📋</div><div class="export-name" id="t-exp3-name"></div><div class="export-desc" id="t-exp3-desc"></div></div>
+        <div class="export-card" onclick="printSchedule()"><div class="export-icon">🖨️</div><div class="export-name" id="t-exp4-name"></div><div class="export-desc" id="t-exp4-desc"></div></div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">ℹ️ Como usar o arquivo .ics</div>
-      <div style="font-size:14px;color:var(--text2);line-height:1.8">
-        <p>📱 <strong style="color:var(--text)">iPhone/iPad:</strong> Toque no arquivo → "Adicionar todos" no Calendário</p>
-        <p style="margin-top:8px">🤖 <strong style="color:var(--text)">Android:</strong> Abra com Google Calendar ou importe em Configurações → Importar</p>
-        <p style="margin-top:8px">💻 <strong style="color:var(--text)">Computador:</strong> Clique duas vezes no .ics para importar no calendário padrão</p>
-      </div>
+      <div class="card-title" id="t-ics-info-title"></div>
+      <div style="font-size:14px;color:var(--text2);line-height:1.8" id="t-ics-info-body"></div>
     </div>
     <div class="nav-actions">
-      <button class="btn btn-secondary" onclick="goToStep(4)">← Voltar</button>
-      <button class="btn btn-success btn-lg" onclick="exportICS()">⬇️ Baixar Calendário .ics</button>
+      <button class="btn btn-secondary" onclick="goToStep(4)" id="t-back5"></button>
+      <button class="btn btn-success btn-lg" onclick="exportICS()" id="t-dl-btn"></button>
     </div>
   </div>
 </div>
@@ -265,42 +270,341 @@
   </div>
 </div>
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-let currentStep=1,parsedPDFText='',allNames=[],selectedName='',rawScheduleData={},selectedSchedule=[];
+// ── TRANSLATIONS ─────────────────────────────────────────────────
+const T = {
+  pt: {
+    logoText:'EscalaFácil', logoSub:'Importador de Escala de Trabalho',
+    steps:['📎 Importar PDF','🔤 Tabela de Turnos','👤 Escolher Nome','📋 Ver Escala','📆 Exportar'],
+    stepNum:'Passo',
+    's1-title':'📎 Importar Escala (PDF)', 's1-desc':'Selecione o PDF da escala de trabalho. O sistema irá ler o conteúdo automaticamente.',
+    'upload-text':'Clique aqui para escolher o PDF', 'upload-hint':'ou arraste e solte o arquivo aqui',
+    'loading':'Lendo o PDF, aguarde...',
+    'manual-title':'✏️ Ou cole o texto manualmente', 'manual-desc':'Se o PDF não funcionar, copie e cole o conteúdo da escala abaixo.',
+    'manual-label':'Texto da escala (cole aqui)', 'month-label':'Mês e Ano da Escala',
+    'process-btn':'🔍 Processar Texto', 'history-title':'🕐 Escalas Importadas Anteriormente',
+    'next1':'Próximo: Tabela de Turnos →',
+    's2-title':'🔤 Tabela de Turnos', 's2-desc':'Configure o horário de cada letra. Já pré-preenchida com os horários de referência.',
+    's2-alert':'Os horários já foram configurados com base na tabela de referência. Edite se necessário.',
+    'add-code-label':'Adicionar nova letra personalizada:', 'new-code-ph':'Ex: Z1', 'new-time-ph':'Ex: 08:00-16:00',
+    'add-btn':'+ Adicionar', 'back2':'← Voltar', 'next2':'Próximo: Escolher Nome →',
+    's3-title':'👤 Selecione o Nome do Funcionário', 's3-desc':'Escolha de qual pessoa você quer ver a escala.',
+    'no-names':'Nenhum nome encontrado. Volte ao passo 1 e importe um PDF.',
+    'search-label':'Buscar nome', 'search-ph':'Digite para filtrar...',
+    'add-name-label':'Não encontrou o nome? Adicione manualmente:', 'name-ph':'Nome completo',
+    'add-name-btn':'+ Adicionar', 'back3':'← Voltar', 'next3':'Próximo: Ver Escala →',
+    's4-title':'Escala de', 'th-day':'Dia', 'th-weekday':'Dia da Semana', 'th-code':'Código', 'th-time':'Horário',
+    'no-schedule':'Nenhum dado encontrado para esta pessoa.',
+    'back4':'← Voltar', 'next4':'Próximo: Exportar para Calendário →',
+    's5-title':'📆 Exportar para o Calendário', 's5-desc':'Escolha como deseja adicionar os eventos ao calendário.',
+    'exp1-name':'Baixar arquivo .ics', 'exp1-desc':'Funciona em iPhone, Android, Outlook e Google Calendar',
+    'exp2-desc':'Abre cada evento no Google Calendar',
+    'exp3-name':'Copiar como texto', 'exp3-desc':'Cole em WhatsApp, e-mail ou onde quiser',
+    'exp4-name':'Imprimir / PDF', 'exp4-desc':'Imprima ou salve como PDF',
+    'ics-info-title':'ℹ️ Como usar o arquivo .ics',
+    'ics-info-body':'📱 <strong style="color:var(--text)">iPhone/iPad:</strong> Toque no arquivo → "Adicionar todos"\n🤖 <strong style="color:var(--text)">Android:</strong> Abra com o Google Calendar\n💻 <strong style="color:var(--text)">Computador:</strong> Clique duas vezes no .ics',
+    'back5':'← Voltar', 'dl-btn':'⬇️ Baixar Calendário .ics',
+    'confirm':'Confirmar', 'close':'Fechar',
+    'manual-ph':'Cole aqui o conteúdo da escala...\n\nExemplo:\nFULANO DA SILVA\n01 A  02 B  03 C  04 F',
+    weekdays:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],
+    months:['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+    shifts:'turnos', workers:'funcionário(s)', pages:'pág.',
+    folga:'Folga', unknown:'código(s) desconhecido(s)',
+    loaded:'carregados', advanceTo:'Avance para o Passo 3.',
+    historyLoaded:'escala(s) carregada(s).',
+    icsDownloaded:'O arquivo .ics foi baixado.\n\n📱 iPhone: Toque no arquivo → "Adicionar todos".\n🤖 Android: Abra com o Google Calendar.\n💻 Computador: Clique duas vezes.',
+    gcalMsg:'Serão abertos {n} evento(s) no Google Calendar.\nCertifique-se de estar logado.',
+    gcalTip:'Para importar todos os {n} turnos de uma vez, use "Baixar .ics".',
+    copied:'Escala copiada! Cole onde quiser.',
+    errorPDF:'Não foi possível ler o PDF. Tente colar o texto manualmente.\n\nErro: ',
+    emptyText:'Cole o conteúdo da escala na área de texto.',
+    processed:'Texto processado!\nForam encontrados {n} funcionário(s).',
+    invalidFile:'Por favor, selecione um arquivo PDF.',
+    attention:'Atenção', fillBoth:'Preencha o código e o horário.',
+    noSchedule:'Complete os passos anteriores.',
+  },
+  it: {
+    logoText:'TurniLavoro', logoSub:'Importatore di Turni di Lavoro',
+    steps:['📎 Importa PDF','🔤 Tabella Turni','👤 Scegli Nome','📋 Vedi Turni','📆 Esporta'],
+    stepNum:'Passo',
+    's1-title':'📎 Importa Turni (PDF)', 's1-desc':'Seleziona il PDF con i turni di lavoro. Il sistema leggerà il contenuto automaticamente.',
+    'upload-text':'Clicca qui per scegliere il PDF', 'upload-hint':'o trascina e rilascia il file qui',
+    'loading':'Lettura del PDF in corso...',
+    'manual-title':'✏️ Oppure incolla il testo manualmente', 'manual-desc':'Se il PDF non funziona, copia e incolla il contenuto dei turni qui sotto.',
+    'manual-label':'Testo dei turni (incolla qui)', 'month-label':'Mese e Anno dei Turni',
+    'process-btn':'🔍 Elabora Testo', 'history-title':'🕐 Turni Importati in Precedenza',
+    'next1':'Avanti: Tabella Turni →',
+    's2-title':'🔤 Tabella Turni', 's2-desc':'Configura l\'orario di ogni lettera. Già precompilata con gli orari di riferimento.',
+    's2-alert':'Gli orari sono già stati configurati in base alla tabella di riferimento. Modifica se necessario.',
+    'add-code-label':'Aggiungi nuova lettera personalizzata:', 'new-code-ph':'Es: Z1', 'new-time-ph':'Es: 08:00-16:00',
+    'add-btn':'+ Aggiungi', 'back2':'← Indietro', 'next2':'Avanti: Scegli Nome →',
+    's3-title':'👤 Seleziona il Nome del Dipendente', 's3-desc':'Scegli di quale persona vuoi vedere i turni.',
+    'no-names':'Nessun nome trovato. Torna al passo 1 e importa un PDF.',
+    'search-label':'Cerca nome', 'search-ph':'Digita per filtrare...',
+    'add-name-label':'Non trovi il nome? Aggiungilo manualmente:', 'name-ph':'Nome completo',
+    'add-name-btn':'+ Aggiungi', 'back3':'← Indietro', 'next3':'Avanti: Vedi Turni →',
+    's4-title':'Turni di', 'th-day':'Giorno', 'th-weekday':'Giorno della Settimana', 'th-code':'Codice', 'th-time':'Orario',
+    'no-schedule':'Nessun dato trovato per questa persona.',
+    'back4':'← Indietro', 'next4':'Avanti: Esporta al Calendario →',
+    's5-title':'📆 Esporta al Calendario', 's5-desc':'Scegli come aggiungere i turni al tuo calendario.',
+    'exp1-name':'Scarica file .ics', 'exp1-desc':'Funziona su iPhone, Android, Outlook e Google Calendar',
+    'exp2-desc':'Apre ogni evento in Google Calendar',
+    'exp3-name':'Copia come testo', 'exp3-desc':'Incolla su WhatsApp, email o dove vuoi',
+    'exp4-name':'Stampa / PDF', 'exp4-desc':'Stampa o salva come PDF',
+    'ics-info-title':'ℹ️ Come usare il file .ics',
+    'ics-info-body':'📱 <strong style="color:var(--text)">iPhone/iPad:</strong> Tocca il file → "Aggiungi tutti"\n🤖 <strong style="color:var(--text)">Android:</strong> Apri con Google Calendar\n💻 <strong style="color:var(--text)">Computer:</strong> Doppio clic sul file .ics',
+    'back5':'← Indietro', 'dl-btn':'⬇️ Scarica Calendario .ics',
+    'confirm':'Conferma', 'close':'Chiudi',
+    'manual-ph':'Incolla qui il contenuto dei turni...\n\nEsempio:\nMARIO ROSSI\n01 A  02 B  03 C  04 F',
+    weekdays:['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
+    months:['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+    shifts:'turni', workers:'dipendente/i', pages:'pag.',
+    folga:'Riposo', unknown:'codice/i sconosciuto/i',
+    loaded:'caricati', advanceTo:'Vai al Passo 3.',
+    historyLoaded:'turni caricati.',
+    icsDownloaded:'Il file .ics è stato scaricato.\n\n📱 iPhone: Tocca il file → "Aggiungi tutti".\n🤖 Android: Apri con Google Calendar.\n💻 Computer: Doppio clic.',
+    gcalMsg:'Verranno aperti {n} evento/i in Google Calendar.\nAssicurati di essere connesso.',
+    gcalTip:'Per importare tutti i {n} turni in una volta, usa "Scarica .ics".',
+    copied:'Turni copiati! Incolla dove vuoi.',
+    errorPDF:'Impossibile leggere il PDF. Prova a incollare il testo manualmente.\n\nErrore: ',
+    emptyText:'Incolla il contenuto dei turni nell\'area di testo.',
+    processed:'Testo elaborato!\nTrovati {n} dipendente/i.',
+    invalidFile:'Per favore seleziona un file PDF.',
+    attention:'Attenzione', fillBoth:'Compila il codice e l\'orario.',
+    noSchedule:'Completa i passi precedenti.',
+  }
+};
+// ── STATE & LEGEND ────────────────────────────────────────────────
+let lang = localStorage.getItem('escala_lang') || 'pt';
+let currentStep=1,allNames=[],selectedName='',rawScheduleData={},selectedSchedule=[];
 let history=JSON.parse(localStorage.getItem('escala_history')||'[]');
-const WEEKDAYS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const FOLGA_CODES=['F','FL','FE','DSR','F1','FG','FO'];
 let legend={'A':'03:15-11:15','B':'04:30-12:30','B1':'04:30-12:06','C':'05:00-13:00','C1':'05:00-12:36','C2':'05:30-13:30','D':'06:00-14:00','D1':'06:00-13:36','E':'06:30-14:30','E1':'06:30-14:06','F':'07:00-15:00','F1':'07:00-14:36','G':'08:00-16:00','G1':'08:00-15:36','G2':'08:00-12:00','H':'08:30-16:30','H1':'08:30-16:06','I':'09:00-17:00','I1':'09:00-16:36','J':'09:15-15:15','K':'10:00-18:00','K1':'10:00-17:36','K2':'10:00-14:00','L':'12:00-20:00','L1':'12:00-19:36','L2':'11:30-19:30','M':'12:30-20:30','M1':'12:30-20:06','N':'13:00-21:00','N1':'13:00-20:36','N2':'13:30-21:30','O':'14:00-22:00','O1':'14:00-21:36','P':'14:30-22:30','P1':'14:30-22:06','Q':'15:00-23:00','Q1':'15:00-22:36','R':'15:30-23:30','R1':'15:30-23:06','S':'16:00-24:00','S1':'16:00-23:36','T':'16:30-24:30','T1':'16:30-24:06','U':'17:00-01:00','U1':'17:00-24:36','V':'17:30-21:30','W':'12:00-18:00','X':'09:30-17:30','Y':'20:00-24:00','Z':'11:00-19:00'};
-window.addEventListener('DOMContentLoaded',()=>{renderLegend();renderHistory();setDefaultMonth();setupDragDrop();});
+
+// ── LANG ──────────────────────────────────────────────────────────
+function t(key){return T[lang][key]||T['pt'][key]||key;}
+function setLang(l){
+  lang=l; localStorage.setItem('escala_lang',l);
+  document.getElementById('btnPT').classList.toggle('active',l==='pt');
+  document.getElementById('btnIT').classList.toggle('active',l==='it');
+  document.documentElement.lang=l==='pt'?'pt-BR':'it';
+  applyTranslations();
+  renderSteps();
+  renderLegend();
+  if(allNames.length)renderNameList();
+  if(selectedSchedule.length){const mv=document.getElementById('scheduleMonth').value;const[y,m]=mv.split('-').map(Number);renderScheduleTable(y,m);}
+}
+function applyTranslations(){
+  const $ = id => document.getElementById(id);
+  $('logoText').textContent=t('logoText'); $('logoSub').textContent=t('logoSub');
+  $('t-s1-title').textContent=t('s1-title'); $('t-s1-desc').textContent=t('s1-desc');
+  $('t-upload-text').textContent=t('upload-text'); $('t-upload-hint').textContent=t('upload-hint');
+  $('t-loading').textContent=t('loading');
+  $('t-manual-title').textContent=t('manual-title'); $('t-manual-desc').textContent=t('manual-desc');
+  $('t-manual-label').textContent=t('manual-label'); $('t-month-label').textContent=t('month-label');
+  $('t-process-btn').textContent=t('process-btn'); $('t-history-title').textContent=t('history-title');
+  $('t-next1').textContent=t('next1');
+  $('t-s2-title').textContent=t('s2-title'); $('t-s2-desc').textContent=t('s2-desc');
+  $('t-s2-alert').textContent=t('s2-alert');
+  $('t-add-code-label').textContent=t('add-code-label');
+  $('newCode').placeholder=t('new-code-ph'); $('newTime').placeholder=t('new-time-ph');
+  $('t-add-btn').textContent=t('add-btn'); $('t-back2').textContent=t('back2'); $('t-next2').textContent=t('next2');
+  $('t-s3-title').textContent=t('s3-title'); $('t-s3-desc').textContent=t('s3-desc');
+  $('t-no-names').textContent=t('no-names');
+  $('t-search-label').textContent=t('search-label'); $('nameSearch').placeholder=t('search-ph');
+  $('t-add-name-label').textContent=t('add-name-label'); $('manualName').placeholder=t('name-ph');
+  $('t-add-name-btn').textContent=t('add-name-btn'); $('t-back3').textContent=t('back3');
+  $('btnToStep4').textContent=t('next3');
+  $('t-s4-title').textContent=t('s4-title');
+  $('t-th-day').textContent=t('th-day'); $('t-th-weekday').textContent=t('th-weekday');
+  $('t-th-code').textContent=t('th-code'); $('t-th-time').textContent=t('th-time');
+  $('t-no-schedule').textContent=t('no-schedule');
+  $('t-back4').textContent=t('back4'); $('t-next4').textContent=t('next4');
+  $('t-s5-title').textContent=t('s5-title'); $('t-s5-desc').textContent=t('s5-desc');
+  $('t-exp1-name').textContent=t('exp1-name'); $('t-exp1-desc').textContent=t('exp1-desc');
+  $('t-exp2-desc').textContent=t('exp2-desc');
+  $('t-exp3-name').textContent=t('exp3-name'); $('t-exp3-desc').textContent=t('exp3-desc');
+  $('t-exp4-name').textContent=t('exp4-name'); $('t-exp4-desc').textContent=t('exp4-desc');
+  $('t-ics-info-title').textContent=t('ics-info-title');
+  $('t-ics-info-body').innerHTML=t('ics-info-body').replace(/\n/g,'<br style="margin-top:8px">');
+  $('t-back5').textContent=t('back5'); $('t-dl-btn').textContent=t('dl-btn');
+  $('manualText').placeholder=t('manual-ph');
+}
+function renderSteps(){
+  const bar=document.getElementById('stepsBar');
+  bar.innerHTML='';
+  t('steps').forEach((label,i)=>{
+    const div=document.createElement('div');
+    div.className='step'+(i+1===currentStep?' active':i+1<currentStep?' done':'');
+    div.onclick=()=>goToStep(i+1);
+    div.innerHTML=`<div class="step-num">${t('stepNum')} ${i+1}</div><div class="step-label">${label}</div>`;
+    bar.appendChild(div);
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  applyTranslations(); renderSteps(); renderLegend(); renderHistory(); setDefaultMonth(); setupDragDrop();
+  setLang(lang);
+});
 function setDefaultMonth(){const n=new Date();document.getElementById('scheduleMonth').value=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`;}
-function setupDragDrop(){const z=document.getElementById('uploadZone');z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag-over');});z.addEventListener('dragleave',()=>z.classList.remove('drag-over'));z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')processPDF(f);else showModal('Arquivo inválido','Por favor selecione um PDF.');});}
+function setupDragDrop(){const z=document.getElementById('uploadZone');z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag-over');});z.addEventListener('dragleave',()=>z.classList.remove('drag-over'));z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')processPDF(f);else showModal(t('attention'),t('invalidFile'));});}
+// ── PDF & PARSE ───────────────────────────────────────────────────
 function handlePDFUpload(input){const f=input.files[0];if(f)processPDF(f);}
-async function processPDF(file){document.getElementById('pdfLoading').style.display='block';document.getElementById('uploadStatus').style.display='none';try{const ab=await file.arrayBuffer();const pdf=await pdfjsLib.getDocument({data:ab}).promise;let txt='';for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);const c=await p.getTextContent();txt+=c.items.map(x=>x.str).join(' ')+'\n';}parsedPDFText=txt;document.getElementById('manualText').value=txt;detectMonthFromText(txt);parseScheduleText(txt);document.getElementById('pdfLoading').style.display='none';const s=document.getElementById('uploadStatus');s.style.display='block';s.textContent=`✅ PDF lido! (${pdf.numPages} pág.) — ${allNames.length} funcionário(s) encontrado(s)`;document.getElementById('uploadZone').querySelector('.upload-text').textContent=`✅ ${file.name}`;}catch(err){document.getElementById('pdfLoading').style.display='none';showModal('Erro ao ler PDF',`Não foi possível ler. Tente colar o texto manualmente.\n\nErro: ${err.message}`);}}
-function detectMonthFromText(text){const ms=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];const l=text.toLowerCase();ms.forEach((m,i)=>{if(l.includes(m)){const y=(text.match(/20\d{2}/)||[new Date().getFullYear()])[0];document.getElementById('scheduleMonth').value=`${y}-${String(i+1).padStart(2,'0')}`;}});}
-function parseManualText(){const t=document.getElementById('manualText').value;if(!t.trim()){showModal('Texto vazio','Cole o conteúdo da escala na área de texto.');return;}parseScheduleText(t);showModal('Processado!',`Texto processado!\nForam encontrados ${allNames.length} funcionário(s).`);}
-function parseScheduleText(text){rawScheduleData={};allNames=[];const lines=text.split(/\n|\r/).filter(l=>l.trim());let cur=null;for(let i=0;i<lines.length;i++){const line=lines[i].trim();if(!line)continue;const nm=line.match(/^([A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ][A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ\s]{3,})$/);if(nm&&!hasShiftCodes(line)){cur=nm[1].trim().replace(/\s+/g,' ').toUpperCase();if(!rawScheduleData[cur]){rawScheduleData[cur]={};allNames.push(cur);}continue;}if(cur)parseDayCodesFromLine(line,cur);}const rx=/([A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ][A-Za-záéíóúàâêôãõüç\s]{2,})\s+((?:\d{1,2}\s*[A-Z]{1,2}\d?\s*)+)/g;let m;while((m=rx.exec(text))!==null){const n=m[1].trim().replace(/\s+/g,' ').toUpperCase();if(!rawScheduleData[n]){rawScheduleData[n]={};allNames.push(n);}parseDayCodesFromLine(m[2],n);}allNames=[...new Set(allNames)];renderNameList();renderHistory();saveToHistory();}
+async function processPDF(file){
+  document.getElementById('pdfLoading').style.display='block';
+  document.getElementById('uploadStatus').style.display='none';
+  try{
+    const ab=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+    let txt='';
+    for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);const c=await p.getTextContent();txt+=c.items.map(x=>x.str).join(' ')+'\n';}
+    document.getElementById('manualText').value=txt;
+    detectMonthFromText(txt); parseScheduleText(txt);
+    document.getElementById('pdfLoading').style.display='none';
+    const s=document.getElementById('uploadStatus');
+    s.style.display='block';
+    s.textContent=`✅ PDF lido! (${pdf.numPages} ${t('pages')}) — ${allNames.length} ${t('workers')}`;
+    document.getElementById('uploadZone').querySelector('.upload-text').textContent=`✅ ${file.name}`;
+  }catch(err){document.getElementById('pdfLoading').style.display='none';showModal(t('attention'),t('errorPDF')+err.message);}
+}
+function detectMonthFromText(text){
+  const mspt=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const msit=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  const all=[...mspt,...msit];
+  const l=text.toLowerCase();
+  all.forEach((m,i)=>{
+    if(l.includes(m)){const idx=i%12;const y=(text.match(/20\d{2}/)||[new Date().getFullYear()])[0];document.getElementById('scheduleMonth').value=`${y}-${String(idx+1).padStart(2,'0')}`;}
+  });
+}
+function parseManualText(){const txt=document.getElementById('manualText').value;if(!txt.trim()){showModal(t('attention'),t('emptyText'));return;}parseScheduleText(txt);showModal('✅',t('processed').replace('{n}',allNames.length));}
+function parseScheduleText(text){
+  rawScheduleData={};allNames=[];
+  const lines=text.split(/\n|\r/).filter(l=>l.trim());
+  let cur=null;
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i].trim();if(!line)continue;
+    const nm=line.match(/^([A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ][A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ\s]{3,})$/);
+    if(nm&&!hasShiftCodes(line)){cur=nm[1].trim().replace(/\s+/g,' ').toUpperCase();if(!rawScheduleData[cur]){rawScheduleData[cur]={};allNames.push(cur);}continue;}
+    if(cur)parseDayCodesFromLine(line,cur);
+  }
+  const rx=/([A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ][A-Za-záéíóúàâêôãõüç\s]{2,})\s+((?:\d{1,2}\s*[A-Z]{1,2}\d?\s*)+)/g;
+  let m;while((m=rx.exec(text))!==null){const n=m[1].trim().replace(/\s+/g,' ').toUpperCase();if(!rawScheduleData[n]){rawScheduleData[n]={};allNames.push(n);}parseDayCodesFromLine(m[2],n);}
+  allNames=[...new Set(allNames)];renderNameList();saveToHistory();
+}
 function hasShiftCodes(l){return/\d{1,2}\s+[A-Z]{1,2}\d?/.test(l);}
-function parseDayCodesFromLine(line,name){const p=/(\d{1,2})\s*[-\/]?\s*([A-Z]{1,2}\d?)/g;let m;while((m=p.exec(line))!==null){const d=parseInt(m[1]);const c=m[2].toUpperCase();if(d>=1&&d<=31)rawScheduleData[name][String(d)]=c;}}
-function renderLegend(){const g=document.getElementById('legendGrid');g.innerHTML='';Object.entries(legend).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([code,time])=>{const i=document.createElement('div');i.className='legend-item';i.innerHTML=`<span class="legend-code">${code}</span><input class="legend-input" type="text" value="${time}" onchange="legend['${code}']=this.value" placeholder="hh:mm-hh:mm"><button onclick="deleteLegendItem('${code}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:2px 4px">✕</button>`;g.appendChild(i);});}
-function addLegendItem(){const c=document.getElementById('newCode').value.trim().toUpperCase();const t=document.getElementById('newTime').value.trim();if(!c||!t){showModal('Atenção','Preencha o código e o horário.');return;}legend[c]=t;document.getElementById('newCode').value='';document.getElementById('newTime').value='';renderLegend();}
+function parseDayCodesFromLine(line,name){const p=/(\d{1,2})\s*[-\/]?\s*([A-Z]{1,2}\d?)/g;let m;while((m=p.exec(line))!==null){const d=parseInt(m[1]);if(d>=1&&d<=31)rawScheduleData[name][String(d)]=m[2].toUpperCase();}}
+
+// ── LEGEND ────────────────────────────────────────────────────────
+function renderLegend(){const g=document.getElementById('legendGrid');g.innerHTML='';Object.entries(legend).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([code,time])=>{const i=document.createElement('div');i.className='legend-item';i.innerHTML=`<span class="legend-code">${code}</span><input class="legend-input" type="text" value="${time}" onchange="legend['${code}']=this.value"><button onclick="deleteLegendItem('${code}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:2px 4px">✕</button>`;g.appendChild(i);});}
+function addLegendItem(){const c=document.getElementById('newCode').value.trim().toUpperCase();const tm=document.getElementById('newTime').value.trim();if(!c||!tm){showModal(t('attention'),t('fillBoth'));return;}legend[c]=tm;document.getElementById('newCode').value='';document.getElementById('newTime').value='';renderLegend();}
 function deleteLegendItem(code){delete legend[code];renderLegend();}
-function renderNameList(){const list=document.getElementById('nameList');const na=document.getElementById('noNamesAlert');if(allNames.length===0){list.innerHTML='';na.style.display='flex';return;}na.style.display='none';list.innerHTML='';allNames.forEach(name=>{const ch=document.createElement('div');ch.className='name-chip'+(name===selectedName?' selected':'');ch.textContent=name;ch.onclick=()=>selectName(name);list.appendChild(ch);});}
+
+// ── NAMES ─────────────────────────────────────────────────────────
+function renderNameList(){const list=document.getElementById('nameList');const na=document.getElementById('noNamesAlert');if(!allNames.length){list.innerHTML='';na.style.display='flex';return;}na.style.display='none';list.innerHTML='';allNames.forEach(name=>{const ch=document.createElement('div');ch.className='name-chip'+(name===selectedName?' selected':'');ch.textContent=name;ch.onclick=()=>selectName(name);list.appendChild(ch);});}
 function filterNames(q){document.querySelectorAll('.name-chip').forEach(c=>{c.style.display=c.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';});}
 function selectName(name){selectedName=name;document.querySelectorAll('.name-chip').forEach(c=>c.classList.toggle('selected',c.textContent===name));document.getElementById('btnToStep4').disabled=false;}
 function addManualName(){const n=document.getElementById('manualName').value.trim().toUpperCase();if(!n)return;if(!allNames.includes(n)){allNames.push(n);rawScheduleData[n]={};}document.getElementById('manualName').value='';renderNameList();selectName(n);}
-function buildSchedule(){if(!selectedName)return;const mv=document.getElementById('scheduleMonth').value;let year,month;if(mv){[year,month]=mv.split('-').map(Number);}else{const n=new Date();year=n.getFullYear();month=n.getMonth()+1;}const dim=new Date(year,month,0).getDate();const pd=rawScheduleData[selectedName]||{};selectedSchedule=[];for(let d=1;d<=dim;d++){const dt=new Date(year,month-1,d);const wd=WEEKDAYS[dt.getDay()];const code=pd[String(d)]||null;const time=code?(legend[code]||null):null;const isF=code&&FOLGA_CODES.includes(code);selectedSchedule.push({day:d,date:`${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`,weekday:wd,code,time,isFolga:isF,year,month});}renderScheduleTable(year,month);}
-function renderScheduleTable(year,month){const body=document.getElementById('scheduleBody');const nm=document.getElementById('noScheduleMsg');document.getElementById('selectedNameDisplay').textContent=selectedName;const work=selectedSchedule.filter(s=>s.code&&!s.isFolga).length;const folga=selectedSchedule.filter(s=>s.isFolga).length;const unk=selectedSchedule.filter(s=>s.code&&!s.time&&!s.isFolga).length;document.getElementById('scheduleSubtitle').textContent=`${MONTHS[month-1]} de ${year} — ${work} turnos de trabalho`;document.getElementById('scheduleStats').innerHTML=`<span class="badge badge-blue">📅 ${MONTHS[month-1]} ${year}</span><span class="badge badge-yellow">⚡ ${work} turnos</span>${folga>0?`<span class="badge" style="background:rgba(139,144,168,0.15);color:var(--text2)">🏖️ ${folga} folgas</span>`:''}${unk>0?`<span class="badge" style="background:rgba(255,92,92,0.15);color:var(--danger)">⚠️ ${unk} código(s) desconhecido(s)</span>`:''}`;if(work===0&&folga===0){nm.style.display='flex';body.innerHTML='';return;}nm.style.display='none';body.innerHTML='';selectedSchedule.forEach(e=>{if(!e.code)return;const tr=document.createElement('tr');if(e.weekday==='Dom')tr.classList.add('highlight-row');let cc='—',tc='<span class="text-sm">Sem turno</span>';if(e.isFolga){cc=`<span class="shift-code" style="background:rgba(139,144,168,0.1);color:var(--text2)">${e.code}</span>`;tc='<span class="tag-folga">Folga</span>';}else if(e.code){cc=`<span class="shift-code">${e.code}</span>`;tc=e.time?`<span class="shift-time">${e.time.replace('-',' → ')}</span>`:`<span style="color:var(--danger);font-size:13px">⚠️ "${e.code}" não mapeado</span>`;}tr.innerHTML=`<td><span class="day-num">${String(e.day).padStart(2,'0')}</span></td><td><span class="day-name" style="${e.weekday==='Dom'?'color:var(--danger);font-weight:600':''}">${e.weekday}</span></td><td>${cc}</td><td>${tc}</td>`;body.appendChild(tr);});}
-function generateICSContent(){const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EscalaFacil//PT','CALSCALE:GREGORIAN','METHOD:PUBLISH',`X-WR-CALNAME:Escala ${selectedName}`,'X-WR-TIMEZONE:America/Sao_Paulo'];selectedSchedule.filter(e=>e.code&&e.time&&!e.isFolga).forEach(e=>{const[st,et]=e.time.split('-');const[sh,sm]=st.split(':').map(Number);let[eh,em]=et.split(':').map(Number);const sd=new Date(e.year,e.month-1,e.day,sh,sm);let ed=new Date(e.year,e.month-1,e.day,eh,em);if(eh<sh||(eh===sh&&em<sm))ed.setDate(ed.getDate()+1);const fmt=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}00`;lines.push('BEGIN:VEVENT',`UID:escala-${e.date}-${e.code}@escalafacil`,`DTSTART:${fmt(sd)}`,`DTEND:${fmt(ed)}`,`SUMMARY:Turno ${e.code} — ${selectedName}`,`DESCRIPTION:Código: ${e.code}\\nHorário: ${e.time}\\nFuncionário: ${selectedName}`,'BEGIN:VALARM','TRIGGER:-PT30M','ACTION:DISPLAY','DESCRIPTION:Lembrete de turno','END:VALARM','END:VEVENT');});lines.push('END:VCALENDAR');return lines.join('\r\n');}
-function exportICS(){if(!selectedSchedule.length){showModal('Atenção','Complete os passos anteriores.');return;}const blob=new Blob([generateICSContent()],{type:'text/calendar;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`escala_${selectedName.replace(/\s+/g,'_')}.ics`;a.click();URL.revokeObjectURL(url);showModal('✅ Arquivo baixado!','O arquivo .ics foi baixado.\n\n📱 iPhone: Toque no arquivo → "Adicionar todos".\n\n🤖 Android: Abra com o Google Calendar.\n\n💻 Computador: Clique duas vezes no arquivo.');}
-function exportGoogleCalendar(){const work=selectedSchedule.filter(e=>e.code&&e.time&&!e.isFolga);if(!work.length){showModal('Atenção','Não há turnos para exportar.');return;}showModal('Google Calendar',`Serão abertos ${Math.min(work.length,5)} evento(s). Certifique-se de estar logado no Google.`,()=>{work.slice(0,5).forEach((e,idx)=>{setTimeout(()=>{const[st,et]=e.time.split('-');const[sh,sm]=st.split(':').map(Number);let[eh,em]=et.split(':').map(Number);const sd=new Date(e.year,e.month-1,e.day,sh,sm);let ed=new Date(e.year,e.month-1,e.day,eh,em);if(eh<sh)ed.setDate(ed.getDate()+1);const fmt=d=>d.toISOString().replace(/[-:]/g,'').replace('.000','');window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Turno+${e.code}+-+${encodeURIComponent(selectedName)}&dates=${fmt(sd)}/${fmt(ed)}`,'_blank');},idx*500);});if(work.length>5)showModal('Dica',`Para importar todos os ${work.length} turnos de uma vez, use "Baixar .ics".`);});}
-function copyToClipboard(){if(!selectedSchedule.length)return;const mv=document.getElementById('scheduleMonth').value;const[y,m]=(mv||`${new Date().getFullYear()}-${new Date().getMonth()+1}`).split('-').map(Number);let txt=`ESCALA — ${selectedName}\n${MONTHS[m-1]} ${y}\n${'─'.repeat(40)}\n`;selectedSchedule.forEach(e=>{if(!e.code)return;txt+=e.isFolga?`${String(e.day).padStart(2,'0')} ${e.weekday}  [FOLGA]\n`:`${String(e.day).padStart(2,'0')} ${e.weekday}  ${e.code}  ${e.time||'?'}\n`;});navigator.clipboard.writeText(txt).then(()=>showModal('✅ Copiado!','Escala copiada! Cole onde quiser.')).catch(()=>showModal('Escala',txt));}
+
+// ── SCHEDULE ──────────────────────────────────────────────────────
+function buildSchedule(){
+  if(!selectedName)return;
+  const mv=document.getElementById('scheduleMonth').value;
+  let year,month;
+  if(mv){[year,month]=mv.split('-').map(Number);}else{const n=new Date();year=n.getFullYear();month=n.getMonth()+1;}
+  const dim=new Date(year,month,0).getDate();
+  const pd=rawScheduleData[selectedName]||{};
+  selectedSchedule=[];
+  const WD=t('weekdays');
+  for(let d=1;d<=dim;d++){const dt=new Date(year,month-1,d);const wd=WD[dt.getDay()];const code=pd[String(d)]||null;const time=code?(legend[code]||null):null;const isF=code&&FOLGA_CODES.includes(code);selectedSchedule.push({day:d,date:`${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`,weekday:wd,isSunday:dt.getDay()===0,code,time,isFolga:isF,year,month});}
+  renderScheduleTable(year,month);
+}
+function renderScheduleTable(year,month){
+  const body=document.getElementById('scheduleBody');
+  const nm=document.getElementById('noScheduleMsg');
+  const MONTHS=t('months');
+  document.getElementById('selectedNameDisplay').textContent=selectedName;
+  const work=selectedSchedule.filter(s=>s.code&&!s.isFolga).length;
+  const folga=selectedSchedule.filter(s=>s.isFolga).length;
+  const unk=selectedSchedule.filter(s=>s.code&&!s.time&&!s.isFolga).length;
+  document.getElementById('scheduleSubtitle').textContent=`${MONTHS[month-1]} ${year} — ${work} ${t('shifts')}`;
+  document.getElementById('scheduleStats').innerHTML=`<span class="badge badge-blue">📅 ${MONTHS[month-1]} ${year}</span><span class="badge badge-yellow">⚡ ${work} ${t('shifts')}</span>${folga>0?`<span class="badge" style="background:rgba(139,144,168,0.15);color:var(--text2)">🏖️ ${folga} ${t('folga').toLowerCase()}</span>`:''}${unk>0?`<span class="badge" style="background:rgba(255,92,92,0.15);color:var(--danger)">⚠️ ${unk} ${t('unknown')}</span>`:''}`;
+  if(!work&&!folga){nm.style.display='flex';body.innerHTML='';return;}
+  nm.style.display='none';body.innerHTML='';
+  selectedSchedule.forEach(e=>{
+    if(!e.code)return;
+    const tr=document.createElement('tr');if(e.isSunday)tr.classList.add('highlight-row');
+    let cc='—',tc=`<span class="text-sm">—</span>`;
+    if(e.isFolga){cc=`<span class="shift-code" style="background:rgba(139,144,168,0.1);color:var(--text2)">${e.code}</span>`;tc=`<span class="tag-folga">${t('folga')}</span>`;}
+    else if(e.code){cc=`<span class="shift-code">${e.code}</span>`;tc=e.time?`<span class="shift-time">${e.time.replace('-',' → ')}</span>`:`<span style="color:var(--danger);font-size:13px">⚠️ "${e.code}" — ${t('unknown')}</span>`;}
+    tr.innerHTML=`<td><span class="day-num">${String(e.day).padStart(2,'0')}</span></td><td><span class="day-name" style="${e.isSunday?'color:var(--danger);font-weight:600':''}">${e.weekday}</span></td><td>${cc}</td><td>${tc}</td>`;
+    body.appendChild(tr);
+  });
+}
+// ── EXPORT ────────────────────────────────────────────────────────
+function generateICSContent(){
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EscalaFacil//PT','CALSCALE:GREGORIAN','METHOD:PUBLISH',`X-WR-CALNAME:Turni ${selectedName}`,'X-WR-TIMEZONE:Europe/Rome'];
+  selectedSchedule.filter(e=>e.code&&e.time&&!e.isFolga).forEach(e=>{
+    const[st,et]=e.time.split('-');const[sh,sm]=st.split(':').map(Number);let[eh,em]=et.split(':').map(Number);
+    const sd=new Date(e.year,e.month-1,e.day,sh,sm);let ed=new Date(e.year,e.month-1,e.day,eh,em);
+    if(eh<sh||(eh===sh&&em<sm))ed.setDate(ed.getDate()+1);
+    const fmt=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}00`;
+    lines.push('BEGIN:VEVENT',`UID:escala-${e.date}-${e.code}@escalafacil`,`DTSTART:${fmt(sd)}`,`DTEND:${fmt(ed)}`,`SUMMARY:Turno ${e.code} — ${selectedName}`,`DESCRIPTION:Codice/Código: ${e.code}\\nOrario/Horário: ${e.time}`,'BEGIN:VALARM','TRIGGER:-PT30M','ACTION:DISPLAY','DESCRIPTION:Reminder turno','END:VALARM','END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');return lines.join('\r\n');
+}
+function exportICS(){if(!selectedSchedule.length){showModal(t('attention'),t('noSchedule'));return;}const blob=new Blob([generateICSContent()],{type:'text/calendar;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`turni_${selectedName.replace(/\s+/g,'_')}.ics`;a.click();URL.revokeObjectURL(url);showModal('✅',t('icsDownloaded'));}
+function exportGoogleCalendar(){
+  const work=selectedSchedule.filter(e=>e.code&&e.time&&!e.isFolga);
+  if(!work.length){showModal(t('attention'),t('noSchedule'));return;}
+  showModal('Google Calendar',t('gcalMsg').replace('{n}',Math.min(work.length,5)),()=>{
+    work.slice(0,5).forEach((e,idx)=>{setTimeout(()=>{const[st,et]=e.time.split('-');const[sh,sm]=st.split(':').map(Number);let[eh,em]=et.split(':').map(Number);const sd=new Date(e.year,e.month-1,e.day,sh,sm);let ed=new Date(e.year,e.month-1,e.day,eh,em);if(eh<sh)ed.setDate(ed.getDate()+1);const fmt=d=>d.toISOString().replace(/[-:]/g,'').replace('.000','');window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Turno+${e.code}+-+${encodeURIComponent(selectedName)}&dates=${fmt(sd)}/${fmt(ed)}`,'_blank');},idx*500);});
+    if(work.length>5)showModal('💡',t('gcalTip').replace('{n}',work.length));
+  });
+}
+function copyToClipboard(){
+  if(!selectedSchedule.length)return;
+  const mv=document.getElementById('scheduleMonth').value;const[y,m]=(mv||`${new Date().getFullYear()}-${new Date().getMonth()+1}`).split('-').map(Number);
+  const MONTHS=t('months');
+  let txt=`TURNI — ${selectedName}\n${MONTHS[m-1]} ${y}\n${'─'.repeat(40)}\n`;
+  selectedSchedule.forEach(e=>{if(!e.code)return;txt+=e.isFolga?`${String(e.day).padStart(2,'0')} ${e.weekday}  [${t('folga').toUpperCase()}]\n`:`${String(e.day).padStart(2,'0')} ${e.weekday}  ${e.code}  ${e.time||'?'}\n`;});
+  navigator.clipboard.writeText(txt).then(()=>showModal('✅',t('copied'))).catch(()=>showModal('Turni',txt));
+}
 function printSchedule(){window.print();}
-function saveToHistory(){if(!allNames.length)return;const mv=document.getElementById('scheduleMonth').value;const e={id:Date.now(),date:new Date().toLocaleDateString('pt-BR'),names:allNames,month:mv,rawData:rawScheduleData};history.unshift(e);if(history.length>10)history.pop();localStorage.setItem('escala_history',JSON.stringify(history));renderHistory();}
-function renderHistory(){const card=document.getElementById('historyCard');const list=document.getElementById('historyList');if(!history.length){card.style.display='none';return;}card.style.display='block';list.innerHTML='';history.slice(0,5).forEach(e=>{const[y,mo]=(e.month||'').split('-');const mn=mo?MONTHS[parseInt(mo)-1]:'—';const item=document.createElement('div');item.className='history-item';item.innerHTML=`<div class="history-icon">📋</div><div class="history-info"><div class="history-name">${e.names.slice(0,3).join(', ')}${e.names.length>3?` +${e.names.length-3}`:''}</div><div class="history-meta">${mn} ${y||''} · ${e.date} · ${e.names.length} funcionário(s)</div></div><button class="btn btn-secondary" style="font-size:12px;padding:6px 12px" onclick="loadHistory(${e.id})">Carregar</button>`;list.appendChild(item);});}
-function loadHistory(id){const e=history.find(h=>h.id===id);if(!e)return;allNames=e.names;rawScheduleData=e.rawData;if(e.month)document.getElementById('scheduleMonth').value=e.month;renderNameList();showModal('✅ Escala carregada!',`${allNames.length} funcionário(s) carregados. Avance para o Passo 3.`);}
-function goToStep(step){if(step===3)renderNameList();if(step===4)buildSchedule();if(step===5){const c=selectedSchedule.filter(e=>e.code&&e.time&&!e.isFolga).length;document.getElementById('exportSummary').textContent=`${c} turno(s) de ${selectedName} prontos para exportar.`;}currentStep=step;document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i+1===step));document.querySelectorAll('.step').forEach((s,i)=>{s.classList.toggle('active',i+1===step);s.classList.toggle('done',i+1<step);});document.getElementById('progressFill').style.width=(step/5*100)+'%';window.scrollTo({top:0,behavior:'smooth'});}
-function showModal(title,body,onConfirm){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').textContent=body;document.getElementById('modalOverlay').classList.add('open');const a=document.querySelector('.modal-actions');a.innerHTML='';if(onConfirm){const b=document.createElement('button');b.className='btn btn-primary';b.textContent='Confirmar';b.onclick=()=>{closeModal();onConfirm();};a.appendChild(b);}const cb=document.createElement('button');cb.className='btn btn-secondary';cb.textContent='Fechar';cb.onclick=closeModal;a.appendChild(cb);}
+
+// ── HISTORY ───────────────────────────────────────────────────────
+function saveToHistory(){if(!allNames.length)return;const mv=document.getElementById('scheduleMonth').value;const e={id:Date.now(),date:new Date().toLocaleDateString(),names:allNames,month:mv,rawData:rawScheduleData};history.unshift(e);if(history.length>10)history.pop();localStorage.setItem('escala_history',JSON.stringify(history));renderHistory();}
+function renderHistory(){
+  const card=document.getElementById('historyCard');const list=document.getElementById('historyList');
+  if(!history.length){card.style.display='none';return;}card.style.display='block';list.innerHTML='';
+  history.slice(0,5).forEach(e=>{
+    const[y,mo]=(e.month||'').split('-');const MONTHS=t('months');const mn=mo?MONTHS[parseInt(mo)-1]:'—';
+    const item=document.createElement('div');item.className='history-item';
+    item.innerHTML=`<div class="history-icon">📋</div><div class="history-info"><div class="history-name">${e.names.slice(0,3).join(', ')}${e.names.length>3?` +${e.names.length-3}`:''}</div><div class="history-meta">${mn} ${y||''} · ${e.date} · ${e.names.length} ${t('workers')}</div></div><button class="btn btn-secondary" style="font-size:12px;padding:6px 12px" onclick="loadHistory(${e.id})">↩</button>`;
+    list.appendChild(item);
+  });
+}
+function loadHistory(id){const e=history.find(h=>h.id===id);if(!e)return;allNames=e.names;rawScheduleData=e.rawData;if(e.month)document.getElementById('scheduleMonth').value=e.month;renderNameList();showModal('✅',`${allNames.length} ${t('workers')} ${t('loaded')}. ${t('advanceTo')}`);}
+
+// ── NAV & MODAL ───────────────────────────────────────────────────
+function goToStep(step){
+  if(step===3)renderNameList();
+  if(step===4)buildSchedule();
+  if(step===5){const c=selectedSchedule.filter(e=>e.code&&e.time&&!e.isFolga).length;document.getElementById('exportSummary').textContent=`${c} ${t('shifts')} — ${selectedName}`;}
+  currentStep=step;
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i+1===step));
+  renderSteps();
+  document.getElementById('progressFill').style.width=(step/5*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showModal(title,body,onConfirm){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').textContent=body;
+  document.getElementById('modalOverlay').classList.add('open');
+  const a=document.querySelector('.modal-actions');a.innerHTML='';
+  if(onConfirm){const b=document.createElement('button');b.className='btn btn-primary';b.textContent=t('confirm');b.onclick=()=>{closeModal();onConfirm();};a.appendChild(b);}
+  const cb=document.createElement('button');cb.className='btn btn-secondary';cb.textContent=t('close');cb.onclick=closeModal;a.appendChild(cb);
+}
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
 </script>
 </body>
