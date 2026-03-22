@@ -480,103 +480,109 @@ function detectMonthFromText(text){
 function parseManualText(){const txt=document.getElementById('manualText').value;if(!txt.trim()){showModal(t('attention'),t('emptyText'));return;}parseScheduleText(txt);showModal('\u2705',t('processed').replace('{n}',allNames.length));}
 
 // SHIFT CODES valid set
-\d?$/.test(u);}$/.test(u)&&!/^\d/.test(u)&&u.trim().split(/\s+/).length>=1&&!isShiftCode(u)&&u.length>3;}
+const VALID_CODES=new Set(['A','B','B1','C','C1','C2','D','D1','E','E1','F','F1','F2','G','G1','G2','H','H1','I','I1','J','K','K1','K2','L','L1','L2','M','M1','N','N1','N2','O','O1','P','P1','Q','Q1','R','R1','S','S1','T','T1','U','U1','V','W','X','Y','Z','FE','RL','ST','FL','DSR']);
+
+function isShiftCode(s){if(!s)return false;const u=s.trim().toUpperCase();return VALID_CODES.has(u)||/^[A-Z]{1,2}\d?$/.test(u);}
+function isNameLike(s){if(!s||s.trim().length<3)return false;const u=s.trim();// Must have letters, no digits, no single-letter cells
+return /^[A-Z\u00C0-\u024F'\s]{3,}$/.test(u)&&!/^\d/.test(u)&&u.trim().split(/\s+/).length>=1&&!isShiftCode(u)&&u.length>3;}
 
 function parseScheduleText(text){
   rawScheduleData={};allNames=[];
+  // Strategy 1: TABLE FORMAT — "NAME day1code day2code ... day31code"
+  // The PDF text comes as: "01-mar 02-mar ... NOME1 A B C ... NOME2 D E F ..."
+  // We need to find day-header row then parse each name row
 
-  // Tokenize the whole text (PDF.js often returns one big flat string)
-  const ALL_TOKENS = text.split(/\s+/).filter(Boolean);
-  const WD = /^(dom|lun|mar|mer|gio|ven|sab|sun|mon|tue|wed|thu|fri|sat)$/i;
-  const DAY_HDR = /^\d{1,2}[-\/](mar|apr|mag|giu|lug|ago|set|ott|nov|dic|gen|feb|jan|may|jun|jul|aug|sep|oct|dec)$/i;
-  const SHIFT = /^(RL|ST|FE|G[12]?|F[12]?|K[12]?|C[12]?|N[12]?|Q[12]?|S[12]?|E[12]?|O[12]?|P[12]?|R[12]?|T[12]?|U[12]?|V|W|X|Y|Z|D[12]?|H[12]?|I[12]?|J|L[12]?|M[12]?|B[12]?)$/;
+  const lines=text.split(/\n|\r/).map(l=>l.trim()).filter(Boolean);
 
-  // ── STRATEGY 1: TOKEN-STREAM TABLE ────────────────────────────────
-  // Find where day-header starts (sequence of DD-mon tokens)
-  let hStart = -1;
-  for(let i=0; i<ALL_TOKENS.length-5; i++){
-    if(DAY_HDR.test(ALL_TOKENS[i])){hStart=i; break;}
-  }
-
-  if(hStart >= 0){
-    // Collect all day numbers from header
-    let dayNums = [];
-    let i = hStart;
-    while(i < ALL_TOKENS.length && (DAY_HDR.test(ALL_TOKENS[i]) || /^\d{1,2}$/.test(ALL_TOKENS[i]))){
-      const m = ALL_TOKENS[i].match(/^(\d{1,2})/);
-      if(m) dayNums.push(parseInt(m[1]));
-      i++;
-    }
-    // Skip weekday row (Dom Lun Mar ...)
-    let j = i;
-    const wdCount = ALL_TOKENS.slice(j, j+dayNums.length+2).filter(t=>WD.test(t)).length;
-    if(wdCount > dayNums.length * 0.5) j += dayNums.length;
-
-    // Now parse NAME + codes blocks
-    // Each employee block: 1-3 name tokens (all-alpha, len>2) + exactly dayNums.length shift codes
-    while(j < ALL_TOKENS.length){
-      const tk = ALL_TOKENS[j];
-      // Skip header repeats, weekday rows, month names
-      if(DAY_HDR.test(tk)){j++; continue;}
-      if(WD.test(tk)){j++; continue;}
-      if(/^MARZO$|^APRILE$|^MAGGIO$|^GIUGNO$|^LUGLIO$|^AGOSTO$|^SETTEMBRE$|^OTTOBRE$|^NOVEMBRE$|^DICEMBRE$|^GENNAIO$|^FEBBRAIO$/i.test(tk)){j++; continue;}
-
-      // Try to read name: 1-4 tokens that are all-alpha (>2 chars, not shift codes)
-      let nameTokens = [];
-      let k = j;
-      while(k < ALL_TOKENS.length && nameTokens.length < 4){
-        const candidate = ALL_TOKENS[k];
-        if(/^[A-Z\u00C0-\u024F']{2,}$/.test(candidate) && !SHIFT.test(candidate) && !WD.test(candidate) && !DAY_HDR.test(candidate)){
-          nameTokens.push(candidate);
-          k++;
-        } else { break; }
-      }
-      if(nameTokens.length === 0){ j++; continue; }
-
-      // After name tokens, expect shift codes
-      let codes = [];
-      while(k < ALL_TOKENS.length && codes.length < dayNums.length){
-        const c = ALL_TOKENS[k].toUpperCase();
-        if(WD.test(c) || DAY_HDR.test(c)){ k++; continue; }
-        if(/^[A-Z]{1,2}\d?$/.test(c)){
-          codes.push(c);
-          k++;
-        } else { break; }
-      }
-
-      if(codes.length >= Math.floor(dayNums.length * 0.7)){
-        const name = nameTokens.join(' ').toUpperCase();
-        if(!rawScheduleData[name]){ rawScheduleData[name]={}; allNames.push(name); }
-        codes.forEach((code, idx)=>{
-          const day = dayNums[idx];
-          if(day && day>=1 && day<=31) rawScheduleData[name][String(day)] = code;
-        });
-        j = k;
-      } else {
-        j++;
-      }
+  // Find the day-header line: contains "01" or "01-mar" or "01-jan" etc
+  let dayHeaderIdx=-1;
+  let dayNumbers=[];
+  for(let i=0;i<lines.length;i++){
+    const tokens=lines[i].split(/\s+/);
+    const dayTokens=tokens.filter(tk=>/^0?[1-9]$|^[12]\d$|^3[01]$/.test(tk)||/^\d{1,2}[-\/](mar|apr|mag|giu|lug|ago|set|ott|nov|dic|gen|feb|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i.test(tk));
+    if(dayTokens.length>=20){// found header row with 20+ day entries
+      dayHeaderIdx=i;
+      dayNumbers=tokens.map(tk=>{const m=tk.match(/^(\d{1,2})/);return m?parseInt(m[1]):null;}).filter(Boolean);
+      break;
     }
   }
 
-  // ── STRATEGY 2: FALLBACK line-by-line ────────────────────────────
-  if(allNames.length === 0){
-    const lines = text.split(/\n|\r/).map(l=>l.trim()).filter(Boolean);
-    let cur = null;
+  if(dayHeaderIdx>=0&&dayNumbers.length>=20){
+    // TABLE MODE: parse rows after header as NAME + codes
+    const numDays=dayNumbers.length;
+    // skip weekday row if present (Dom Lun Mar...)
+    const WD_PATTERN=/^(dom|lun|mar|mer|gio|ven|sab|sun|mon|tue|wed|thu|fri|sat)$/i;
+    let dataStart=dayHeaderIdx+1;
+    if(dataStart<lines.length){
+      const nextTokens=lines[dataStart].split(/\s+/);
+      if(nextTokens.filter(t=>WD_PATTERN.test(t)).length>10) dataStart++;
+    }
+    for(let i=dataStart;i<lines.length;i++){
+      const tokens=lines[i].split(/\s+/).filter(Boolean);
+      if(tokens.length<5)continue;
+      // Re-detect header repetition (skip)
+      const daysInLine=tokens.filter(tk=>/^\d{1,2}[-\/](mar|apr|mag|jan|gen|feb)/i.test(tk));
+      if(daysInLine.length>5)continue;
+      if(tokens.filter(t=>WD_PATTERN.test(t)).length>10)continue;
+      // Skip "MARZO" / month title lines
+      if(tokens.length===1&&/^[A-Z]{4,}$/.test(tokens[0]))continue;
+
+      // Find where name ends and codes begin
+      // Name tokens are all-alpha (possibly accented), code tokens match shift pattern
+      let nameTokens=[];let codeTokens=[];let foundCode=false;
+      for(const tk of tokens){
+        if(!foundCode&&isNameLike(tk)&&!isShiftCode(tk)){nameTokens.push(tk);}
+        else{foundCode=true;codeTokens.push(tk.toUpperCase());}
+      }
+      const name=nameTokens.join(' ').toUpperCase().trim();
+      if(!name||name.length<3)continue;
+      if(codeTokens.length<5)continue;// skip rows with too few codes
+      // Filter out weekday abbrevs that slipped in
+      const cleanCodes=codeTokens.filter(c=>!WD_PATTERN.test(c));
+      if(cleanCodes.length<5)continue;
+      if(!rawScheduleData[name]){rawScheduleData[name]={};allNames.push(name);}
+      cleanCodes.forEach((code,idx)=>{
+        const day=dayNumbers[idx];
+        if(day&&day>=1&&day<=31&&code&&code!=='undefined')rawScheduleData[name][String(day)]=code;
+      });
+    }
+  }
+
+  // Strategy 2: FALLBACK — classic "NAME\n01 A 02 B..." format
+  if(allNames.length===0){
+    let cur=null;
     for(const line of lines){
-      const tokens = line.split(/\s+/);
-      const allAlpha = tokens.every(tk=>/^[A-Z\u00C0-\u024F']+$/.test(tk));
-      if(allAlpha && tokens.length>=1 && tokens.join('').length>3){
-        cur = line.toUpperCase().trim();
-        if(!rawScheduleData[cur]){ rawScheduleData[cur]={}; allNames.push(cur); }
+      const tokens=line.split(/\s+/);
+      const allAlpha=tokens.every(tk=>/^[A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ']+$/.test(tk));
+      const hasDigit=tokens.some(tk=>/^\d{1,2}$/.test(tk));
+      if(allAlpha&&tokens.length>=1&&tokens.join('').length>3&&!hasDigit){
+        cur=line.toUpperCase().trim();
+        if(!rawScheduleData[cur]){rawScheduleData[cur]={};allNames.push(cur);}
       } else if(cur){
-        const p=/(\d{1,2})\s*[-\/]?\s*([A-Z]{1,2}\d?)/g; let m;
-        while((m=p.exec(line))!==null){ const d=parseInt(m[1]); if(d>=1&&d<=31) rawScheduleData[cur][String(d)]=m[2].toUpperCase(); }
+        parseDayCodesFromLine(line,cur);
       }
     }
+  }
+
+  // Strategy 3: INLINE "NAME A B C D..." where codes follow immediately on same line (no day numbers, just sequential)
+  if(allNames.length===0){
+    parseFlatText(text);
   }
 
   allNames=[...new Set(allNames)];
-  renderNameList(); saveToHistory();
+  renderNameList();saveToHistory();
+}
+
+function parseDayCodesFromLine(line,name){const p=/(\d{1,2})\s*[-\/]?\s*([A-Z]{1,2}\d?)/g;let m;while((m=p.exec(line))!==null){const d=parseInt(m[1]);if(d>=1&&d<=31)rawScheduleData[name][String(d)]=m[2].toUpperCase();}}
+
+function parseFlatText(text){
+  const rx=/([A-Z\u00C0-\u024F]{2,}(?:\s[A-Z\u00C0-\u024F]{2,})+)\s+((?:[A-Z]{1,2}\d?\s+){5,})/g;
+  let m;while((m=rx.exec(text))!==null){
+    const name=m[1].trim().toUpperCase();
+    const codes=m[2].trim().split(/\s+/);
+    if(!rawScheduleData[name]){rawScheduleData[name]={};allNames.push(name);}
+    codes.forEach((c,i)=>{if(c&&i+1<=31)rawScheduleData[name][String(i+1)]=c.toUpperCase();});
+  }
 }
 
 // ── LEGEND ────────────────────────────────────────────────────────
