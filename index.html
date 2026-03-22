@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#222638;--border:#2e3347;--accent:#f5c518;--accent2:#4d9fff;--accent3:#3ecf8e;--danger:#ff5c5c;--text:#e8eaf0;--text2:#8b90a8;--text3:#5a5f75;--radius:12px;--shadow:0 4px 24px rgba(0,0,0,.4)}
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#222638;--border:#2e3347;--accent:#f5c518;--accent2:#4d9fff;--accent3:#3ecf8e;--danger:#ff5c5c;--night:#9b7fe8;--text:#e8eaf0;--text2:#8b90a8;--text3:#5a5f75;--radius:12px;--shadow:0 4px 24px rgba(0,0,0,.4)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:16px;line-height:1.6}
 header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px}
@@ -19,7 +19,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .lang-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text2);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
 .lang-btn:hover{border-color:var(--accent2);color:var(--accent2)}
 .lang-btn.active{background:var(--accent);border-color:var(--accent);color:#000}
-.container{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.container{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
 .steps{display:flex;gap:8px;margin-bottom:32px;overflow-x:auto;padding-bottom:4px}
 .step{flex:1;min-width:110px;padding:12px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s;text-align:center}
 .step.active{background:var(--accent);border-color:var(--accent);color:#000}
@@ -61,6 +61,19 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
 .name-chip{padding:10px 18px;background:var(--surface2);border:2px solid var(--border);border-radius:30px;font-size:15px;font-weight:500;cursor:pointer;transition:all .15s}
 .name-chip:hover{border-color:var(--accent2);color:var(--accent2)}
 .name-chip.selected{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700}
+/* MULTI-COLLEAGUE VIEW */
+.colleague-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.col-tab{padding:8px 16px;background:var(--surface2);border:2px solid var(--border);border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.col-tab.active{border-color:var(--accent);color:var(--accent)}
+.col-tab .remove-col{color:var(--text3);font-size:16px;line-height:1;margin-left:4px}
+.col-tab .remove-col:hover{color:var(--danger)}
+/* SUMMARY CARDS */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.summary-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.summary-icon{font-size:24px;margin-bottom:6px}
+.summary-val{font-size:24px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.summary-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+/* SCHEDULE TABLE */
 .schedule-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
 .schedule-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);border-bottom:1px solid var(--border)}
 .schedule-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
@@ -69,8 +82,16 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
 .day-num{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:18px;color:var(--accent2)}
 .day-name{color:var(--text2);font-size:13px}
 .shift-code{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--accent);padding:4px 10px;background:rgba(245,197,24,.1);border-radius:6px;display:inline-block}
+.shift-code.night{color:var(--night);background:rgba(155,127,232,.1)}
 .shift-time{font-weight:500;font-size:15px}
-.tag-rest{padding:3px 10px;background:rgba(139,144,168,.15);border-radius:20px;font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.shift-time.night{color:var(--night)}
+.tag-rest{padding:3px 10px;background:rgba(139,144,168,.15);border-radius:20px;font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase}
+.tag-night{padding:3px 8px;background:rgba(155,127,232,.15);border-radius:20px;font-size:11px;color:var(--night);font-weight:600;margin-left:6px}
+.tag-alarm{padding:3px 8px;background:rgba(245,197,24,.1);border-radius:20px;font-size:11px;color:var(--accent);font-weight:600;margin-left:4px}
+/* MULTI-COL TABLE */
+.multi-table th,.multi-table td{padding:8px 10px}
+.multi-name-header{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:.5px}
+/* EXPORT */
 .export-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:16px}
 .export-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .2s}
 .export-card:hover{border-color:var(--accent2);transform:translateY(-2px);box-shadow:var(--shadow)}
@@ -83,6 +104,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
 .alert-info{background:rgba(77,159,255,.1);border:1px solid rgba(77,159,255,.3);color:var(--accent2)}
 .alert-success{background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);color:var(--accent3)}
 .alert-warn{background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);color:var(--accent)}
+.alert-night{background:rgba(155,127,232,.1);border:1px solid rgba(155,127,232,.3);color:var(--night)}
 .nav-actions{display:flex;gap:12px;justify-content:space-between;margin-top:24px;flex-wrap:wrap}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
@@ -101,13 +123,15 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
 .badge{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 .badge-yellow{background:rgba(245,197,24,.15);color:var(--accent)}
 .badge-blue{background:rgba(77,159,255,.15);color:var(--accent2)}
+.badge-night{background:rgba(155,127,232,.15);color:var(--night)}
 .manual-section{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
 .manual-section h4{font-size:14px;color:var(--text2);margin-bottom:10px}
 .highlight-row td{background:rgba(245,197,24,.04)!important}
+.night-row td{background:rgba(155,127,232,.04)!important}
 @media(max-width:600px){
   .steps{gap:4px}.step{min-width:80px;padding:8px 6px}.step-label{font-size:10px}
   .export-grid{grid-template-columns:1fr 1fr}.btn-lg{padding:14px 20px;font-size:15px}
-  .lang-btn .lang-label{display:none}
+  .lang-btn .lang-label{display:none}.summary-grid{grid-template-columns:repeat(3,1fr)}
 }
 </style>
 </head>
@@ -129,7 +153,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
   <div class="steps" id="stepsBar"></div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
 
-  <!-- STEP 1 -->
+  <!-- STEP 1: IMPORT -->
   <div class="panel active" id="panel-1">
     <div class="card">
       <div class="card-title" id="t-s1-title"></div>
@@ -160,7 +184,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
     <div class="nav-actions"><span></span><button class="btn btn-primary" onclick="goToStep(2)" id="t-next1"></button></div>
   </div>
 
-  <!-- STEP 2 -->
+  <!-- STEP 2: LEGEND -->
   <div class="panel" id="panel-2">
     <div class="card">
       <div class="card-title" id="t-s2-title"></div>
@@ -182,7 +206,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
     </div>
   </div>
 
-  <!-- STEP 3 -->
+  <!-- STEP 3: SELECT NAME(S) -->
   <div class="panel" id="panel-3">
     <div class="card">
       <div class="card-title" id="t-s3-title"></div>
@@ -204,15 +228,27 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
     </div>
   </div>
 
-  <!-- STEP 4 -->
+  <!-- STEP 4: SCHEDULE VIEW -->
   <div class="panel" id="panel-4">
+    <!-- Colleague tabs -->
+    <div id="colleagueTabs" style="display:none;margin-bottom:8px">
+      <div class="card-title" id="t-colleagues-title" style="margin-bottom:12px"></div>
+      <div class="colleague-tabs" id="colleagueTabsBar"></div>
+    </div>
+    <!-- Summary -->
+    <div class="card" id="summaryCard">
+      <div class="card-title">📊 <span id="t-summary-title"></span></div>
+      <div class="summary-grid" id="summaryGrid"></div>
+      <div id="nightAlert" class="alert alert-night" style="display:none">🌙 <span id="t-night-alert"></span></div>
+    </div>
+    <!-- Schedule table -->
     <div class="card">
       <div class="card-title">📋 <span id="t-s4-title"></span> <span id="selectedNameDisplay">—</span></div>
       <div class="card-desc" id="scheduleSubtitle"></div>
-      <div id="scheduleStats" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <div id="scheduleStats" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
       <div style="overflow-x:auto">
-        <table class="schedule-table">
-          <thead><tr><th id="t-th-day"></th><th id="t-th-weekday"></th><th id="t-th-code"></th><th id="t-th-time"></th></tr></thead>
+        <table class="schedule-table" id="mainTable">
+          <thead><tr id="tableHead"></tr></thead>
           <tbody id="scheduleBody"></tbody>
         </table>
       </div>
@@ -224,7 +260,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
     </div>
   </div>
 
-  <!-- STEP 5 -->
+  <!-- STEP 5: EXPORT -->
   <div class="panel" id="panel-5">
     <div class="card">
       <div class="card-title" id="t-s5-title"></div>
@@ -247,7 +283,6 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
     </div>
   </div>
 </div>
-
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-title" id="modalTitle"></div>
@@ -257,105 +292,125 @@ label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bot
 </div>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-// ── TRANSLATIONS ──────────────────────────────────────────────────
 const T={
   pt:{
     logoText:'EscalaFácil',logoSub:'Importador de Escala de Trabalho',
-    steps:['📎 Importar PDF','🔤 Tabela de Turnos','👤 Escolher Nome','📋 Ver Escala','📆 Exportar'],
-    stepNum:'Passo',
-    's1-title':'📎 Importar Escala (PDF)','s1-desc':'Selecione o PDF da escala de trabalho. O sistema irá ler o conteúdo automaticamente.',
+    steps:['📎 Importar PDF','🔤 Tabela de Turnos','👤 Escolher Nome','📋 Ver Escala','📆 Exportar'],stepNum:'Passo',
+    's1-title':'📎 Importar Escala (PDF)','s1-desc':'Selecione o PDF da escala. O sistema irá ler automaticamente.',
     'upload-text':'Clique aqui para escolher o PDF','upload-hint':'ou arraste e solte o arquivo aqui',
     loading:'Lendo o PDF, aguarde...',
-    'manual-title':'✏️ Ou cole o texto manualmente','manual-desc':'Se o PDF não funcionar, copie e cole o conteúdo da escala abaixo.',
-    'manual-label':'Texto da escala (cole aqui)','month-label':'Mês e Ano da Escala',
-    'process-btn':'🔍 Processar Texto','history-title':'🕐 Escalas Importadas Anteriormente',
-    next1:'Próximo: Tabela de Turnos →',
-    's2-title':'🔤 Tabela de Turnos','s2-desc':'Configure o horário de cada letra. Já pré-preenchida com os horários de referência.',
-    's2-alert':'Os horários já foram configurados com base na tabela de referência. Edite se necessário.',
-    'add-code-label':'Adicionar nova letra personalizada:','new-code-ph':'Ex: Z1','new-time-ph':'Ex: 08:00-16:00',
-    'add-btn':'+ Adicionar',back2:'← Voltar',next2:'Próximo: Escolher Nome →',
-    's3-title':'👤 Selecione o Funcionário','s3-desc':'Escolha de qual pessoa você quer ver a escala.',
+    'manual-title':'✏️ Ou cole o texto manualmente','manual-desc':'Se o PDF não funcionar, cole o conteúdo abaixo.',
+    'manual-label':'Texto da escala','month-label':'Mês e Ano',
+    'process-btn':'🔍 Processar','history-title':'🕐 Escalas Anteriores',next1:'Próximo: Tabela →',
+    's2-title':'🔤 Tabela de Turnos','s2-desc':'Horários de cada código. Já configurada com a tabela de referência.',
+    's2-alert':'Verifique e edite se necessário.',
+    'add-code-label':'Adicionar código personalizado:','new-code-ph':'Ex: Z1','new-time-ph':'Ex: 08:00-16:00',
+    'add-btn':'+ Adicionar',back2:'← Voltar',next2:'Próximo: Nomes →',
+    's3-title':'👤 Selecionar Funcionário(s)','s3-desc':'Clique em um ou mais nomes para ver as escalas.',
     'no-names':'Nenhum nome encontrado. Importe um PDF ou cole o texto.',
     'search-label':'Buscar nome','search-ph':'Digite para filtrar...',
-    'add-name-label':'Não encontrou? Adicione manualmente:','name-ph':'Nome completo',
-    'add-name-btn':'+ Adicionar',back3:'← Voltar',next3:'Próximo: Ver Escala →',
-    's4-title':'Escala de','th-day':'Dia','th-weekday':'Dia da Semana','th-code':'Código','th-time':'Horário',
+    'add-name-label':'Adicionar manualmente:','name-ph':'Nome completo',
+    'add-name-btn':'+ Adicionar',back3:'← Voltar',next3:'Ver Escala →',
+    'colleagues-title':'👥 Colegas selecionados:',
+    'summary-title':'Resumo do Mês','night-alert':'Este mês contém turnos noturnos (início após 20h ou término após meia-noite). Descanse bem! 🌙',
+    's4-title':'Escala de','th-day':'Dia','th-weekday':'Dia','th-code':'Código','th-time':'Horário','th-alarm':'Lembrete',
     'no-schedule':'Nenhum dado encontrado para esta pessoa.',
     back4:'← Voltar',next4:'Próximo: Exportar →',
-    's5-title':'📆 Exportar para o Calendário','s5-desc':'Escolha como deseja exportar.',
-    'exp1-name':'Baixar arquivo .ics','exp1-desc':'iPhone, Android, Outlook, Google Calendar',
+    's5-title':'📆 Exportar para o Calendário','s5-desc':'Escolha como exportar.',
+    'exp1-name':'Baixar .ics','exp1-desc':'iPhone, Android, Outlook, Google Calendar',
     'exp2-desc':'Abre cada evento no Google Calendar',
-    'exp3-name':'Copiar como texto','exp3-desc':'Cole em WhatsApp, e-mail ou onde quiser',
-    'exp4-name':'Imprimir / PDF','exp4-desc':'Imprima ou salve como PDF',
+    'exp3-name':'Copiar texto','exp3-desc':'Cole em WhatsApp, e-mail, etc.',
+    'exp4-name':'Imprimir','exp4-desc':'Imprima ou salve como PDF',
     'ics-info-title':'ℹ️ Como usar o arquivo .ics',
     'ics-info-body':'📱 <b>iPhone/iPad:</b> Toque no arquivo → "Adicionar todos"\n🤖 <b>Android:</b> Abra com o Google Calendar\n💻 <b>Computador:</b> Clique duas vezes no .ics',
-    back5:'← Voltar','dl-btn':'⬇️ Baixar Calendário .ics',
-    confirm:'Confirmar',close:'Fechar',
+    back5:'← Voltar','dl-btn':'⬇️ Baixar .ics',confirm:'Confirmar',close:'Fechar',
     'manual-ph':'Cole aqui o conteúdo da escala...',
     weekdays:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],
     months:['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
-    shifts:'turnos',workers:'funcionário(s)',pages:'pág.',rest:'Folga',unknown:'desconhecido',
+    shifts:'turnos',workers:'funcionário(s)',pages:'pág.',rest:'Folga',unknown:'desconhecido',night:'Noturno',alarm:'30min',
     loaded:'carregados',advanceTo:'Vá para o Passo 3.',
     icsOk:'Arquivo .ics baixado!\n\n📱 iPhone: Toque → "Adicionar todos"\n🤖 Android: Abra com Google Calendar\n💻 PC: Clique duas vezes',
-    gcalMsg:'Serão abertos {n} evento(s) no Google Calendar.',gcalTip:'Para importar todos de uma vez, use "Baixar .ics".',
-    copied:'Escala copiada!',errPDF:'Não foi possível ler o PDF.\nTente colar o texto manualmente.\n\nErro: ',
-    emptyText:'Cole o conteúdo da escala na área de texto.',processed:'Processado! {n} funcionário(s) encontrado(s).',
-    invalidFile:'Selecione um arquivo PDF.',attention:'Atenção',fillBoth:'Preencha o código e o horário.',noData:'Complete os passos anteriores.'
+    gcalMsg:'Serão abertos {n} evento(s).',gcalTip:'Para todos de uma vez, use "Baixar .ics".',
+    copied:'Copiado!',errPDF:'Não foi possível ler o PDF.\nTente colar o texto.\n\nErro: ',
+    emptyText:'Cole o conteúdo da escala.',processed:'Processado! {n} funcionário(s).',
+    invalidFile:'Selecione um PDF.',attention:'Atenção',fillBoth:'Preencha código e horário.',noData:'Complete os passos anteriores.',
+    sumMorning:'Manhãs',sumAfternoon:'Tardes',sumNight:'Noites',sumRest:'Folgas/RL',sumWork:'Dias trabalhados',sumHours:'Horas aprox.'
   },
   it:{
     logoText:'TurniLavoro',logoSub:'Importatore di Turni di Lavoro',
-    steps:['📎 Importa PDF','🔤 Tabella Turni','👤 Scegli Nome','📋 Vedi Turni','📆 Esporta'],
-    stepNum:'Passo',
-    's1-title':'📎 Importa Turni (PDF)','s1-desc':'Seleziona il PDF con i turni. Il sistema leggerà il contenuto automaticamente.',
+    steps:['📎 Importa PDF','🔤 Tabella Turni','👤 Scegli Nome','📋 Vedi Turni','📆 Esporta'],stepNum:'Passo',
+    's1-title':'📎 Importa Turni (PDF)','s1-desc':'Seleziona il PDF con i turni. Il sistema leggerà automaticamente.',
     'upload-text':'Clicca qui per scegliere il PDF','upload-hint':'o trascina e rilascia il file qui',
-    loading:'Lettura del PDF in corso...',
-    'manual-title':'✏️ Oppure incolla il testo','manual-desc':'Se il PDF non funziona, copia e incolla il contenuto dei turni qui sotto.',
-    'manual-label':'Testo dei turni (incolla qui)','month-label':'Mese e Anno dei Turni',
-    'process-btn':'🔍 Elabora Testo','history-title':'🕐 Turni Importati in Precedenza',
-    next1:'Avanti: Tabella Turni →',
-    's2-title':'🔤 Tabella Turni','s2-desc':'Configura l\'orario di ogni lettera. Già precompilata con gli orari di riferimento.',
-    's2-alert':'Gli orari sono già configurati. Modifica se necessario.',
-    'add-code-label':'Aggiungi lettera personalizzata:','new-code-ph':'Es: Z1','new-time-ph':'Es: 08:00-16:00',
-    'add-btn':'+ Aggiungi',back2:'← Indietro',next2:'Avanti: Scegli Nome →',
-    's3-title':'👤 Seleziona il Dipendente','s3-desc':'Scegli di quale persona vuoi vedere i turni.',
+    loading:'Lettura PDF in corso...',
+    'manual-title':'✏️ Oppure incolla il testo','manual-desc':'Se il PDF non funziona, incolla il contenuto qui sotto.',
+    'manual-label':'Testo dei turni','month-label':'Mese e Anno',
+    'process-btn':'🔍 Elabora','history-title':'🕐 Turni Precedenti',next1:'Avanti: Tabella →',
+    's2-title':'🔤 Tabella Turni','s2-desc':'Orari per ogni codice. Già configurata con la tabella di riferimento.',
+    's2-alert':'Verifica e modifica se necessario.',
+    'add-code-label':'Aggiungi codice personalizzato:','new-code-ph':'Es: Z1','new-time-ph':'Es: 08:00-16:00',
+    'add-btn':'+ Aggiungi',back2:'← Indietro',next2:'Avanti: Nomi →',
+    's3-title':'👤 Seleziona Dipendente/i','s3-desc':'Clicca su uno o più nomi per vedere i turni.',
     'no-names':'Nessun nome trovato. Importa un PDF o incolla il testo.',
     'search-label':'Cerca nome','search-ph':'Digita per filtrare...',
-    'add-name-label':'Non trovi il nome? Aggiungilo:','name-ph':'Nome completo',
-    'add-name-btn':'+ Aggiungi',back3:'← Indietro',next3:'Avanti: Vedi Turni →',
-    's4-title':'Turni di','th-day':'Giorno','th-weekday':'Giorno della Settimana','th-code':'Codice','th-time':'Orario',
+    'add-name-label':'Aggiungi manualmente:','name-ph':'Nome completo',
+    'add-name-btn':'+ Aggiungi',back3:'← Indietro',next3:'Vedi Turni →',
+    'colleagues-title':'👥 Colleghi selezionati:',
+    'summary-title':'Riepilogo del Mese','night-alert':'Questo mese contiene turni notturni (inizio dopo le 20 o fine dopo mezzanotte). Riposati bene! 🌙',
+    's4-title':'Turni di','th-day':'Giorno','th-weekday':'Giorno','th-code':'Codice','th-time':'Orario','th-alarm':'Promemoria',
     'no-schedule':'Nessun dato trovato per questa persona.',
     back4:'← Indietro',next4:'Avanti: Esporta →',
     's5-title':'📆 Esporta al Calendario','s5-desc':'Scegli come esportare.',
-    'exp1-name':'Scarica file .ics','exp1-desc':'iPhone, Android, Outlook, Google Calendar',
+    'exp1-name':'Scarica .ics','exp1-desc':'iPhone, Android, Outlook, Google Calendar',
     'exp2-desc':'Apre ogni evento in Google Calendar',
-    'exp3-name':'Copia come testo','exp3-desc':'Incolla su WhatsApp, email o dove vuoi',
-    'exp4-name':'Stampa / PDF','exp4-desc':'Stampa o salva come PDF',
+    'exp3-name':'Copia testo','exp3-desc':'Incolla su WhatsApp, email, ecc.',
+    'exp4-name':'Stampa','exp4-desc':'Stampa o salva come PDF',
     'ics-info-title':'ℹ️ Come usare il file .ics',
-    'ics-info-body':'📱 <b>iPhone/iPad:</b> Tocca il file → "Aggiungi tutti"\n🤖 <b>Android:</b> Apri con Google Calendar\n💻 <b>Computer:</b> Doppio clic sul file .ics',
-    back5:'← Indietro','dl-btn':'⬇️ Scarica Calendario .ics',
-    confirm:'Conferma',close:'Chiudi',
+    'ics-info-body':'📱 <b>iPhone/iPad:</b> Tocca il file → "Aggiungi tutti"\n🤖 <b>Android:</b> Apri con Google Calendar\n💻 <b>Computer:</b> Doppio clic sul .ics',
+    back5:'← Indietro','dl-btn':'⬇️ Scarica .ics',confirm:'Conferma',close:'Chiudi',
     'manual-ph':'Incolla qui il contenuto dei turni...',
     weekdays:['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
     months:['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
-    shifts:'turni',workers:'dipendente/i',pages:'pag.',rest:'Riposo',unknown:'sconosciuto',
+    shifts:'turni',workers:'dipendente/i',pages:'pag.',rest:'Riposo',unknown:'sconosciuto',night:'Notturno',alarm:'30min',
     loaded:'caricati',advanceTo:'Vai al Passo 3.',
     icsOk:'File .ics scaricato!\n\n📱 iPhone: Tocca → "Aggiungi tutti"\n🤖 Android: Apri con Google Calendar\n💻 PC: Doppio clic',
-    gcalMsg:'Verranno aperti {n} evento/i in Google Calendar.',gcalTip:'Per importare tutti in una volta, usa "Scarica .ics".',
-    copied:'Turni copiati!',errPDF:'Impossibile leggere il PDF.\nProva a incollare il testo manualmente.\n\nErrore: ',
+    gcalMsg:'Verranno aperti {n} evento/i.',gcalTip:'Per tutti in una volta, usa "Scarica .ics".',
+    copied:'Copiato!',errPDF:'Impossibile leggere il PDF.\nProva a incollare il testo.\n\nErrore: ',
     emptyText:'Incolla il contenuto dei turni.',processed:'Elaborato! {n} dipendente/i trovati.',
-    invalidFile:'Seleziona un file PDF.',attention:'Attenzione',fillBoth:'Compila codice e orario.',noData:'Completa i passi precedenti.'
+    invalidFile:'Seleziona un PDF.',attention:'Attenzione',fillBoth:'Compila codice e orario.',noData:'Completa i passi precedenti.',
+    sumMorning:'Mattine',sumAfternoon:'Pomeriggi',sumNight:'Notti',sumRest:'Riposi/RL',sumWork:'Giorni lavorati',sumHours:'Ore circa'
   }
 };
 
 // ── STATE ─────────────────────────────────────────────────────────
 let lang=localStorage.getItem('escala_lang')||'pt';
-let currentStep=1,allNames=[],selectedName='',rawScheduleData={},selectedSchedule=[];
+let currentStep=1,allNames=[],selectedNames=[],rawScheduleData={},selectedSchedule={};
 let appHistory=JSON.parse(localStorage.getItem('escala_history')||'[]');
-const FOLGA=['FE','DSR','FG','FO','RL','ST'];
-const legend={'A':'03:15-11:15','F':'07:00-15:00','F1':'07:00-14:36','B':'04:30-12:30','B1':'04:30-12:06','C':'05:00-13:00','C1':'05:00-12:36','C2':'05:30-13:30','D':'06:00-14:00','D1':'06:00-13:36','E':'06:30-14:30','E1':'06:30-14:06','G':'08:00-16:00','G1':'08:00-15:36','G2':'08:00-12:00','H':'08:30-16:30','H1':'08:30-16:06','I':'09:00-17:00','I1':'09:00-16:36','J':'09:15-15:15','K':'10:00-18:00','K1':'10:00-17:36','K2':'10:00-14:00','L':'12:00-20:00','L1':'12:00-19:36','L2':'11:30-19:30','M':'12:30-20:30','M1':'12:30-20:06','N':'13:00-21:00','N1':'13:00-20:36','N2':'13:30-21:30','O':'14:00-22:00','O1':'14:00-21:36','P':'14:30-22:30','P1':'14:30-22:06','Q':'15:00-23:00','Q1':'15:00-22:36','R':'15:30-23:30','R1':'15:30-23:06','S':'16:00-24:00','S1':'16:00-23:36','T':'16:30-24:30','T1':'16:30-24:06','U':'17:00-01:00','U1':'17:00-24:36','V':'17:30-21:30','W':'12:00-18:00','X':'09:30-17:30','Y':'20:00-24:00','Z':'11:00-19:00'};
+let activeColleague='';
+const REST_CODES=['RL','ST','FE','DSR','FG','FO'];
+const legend={'A':'03:15-11:15','B':'04:30-12:30','B1':'04:30-12:06','C':'05:00-13:00','C1':'05:00-12:36','C2':'05:30-13:30','D':'06:00-14:00','D1':'06:00-13:36','E':'06:30-14:30','E1':'06:30-14:06','F':'07:00-15:00','F1':'07:00-14:36','G':'08:00-16:00','G1':'08:00-15:36','G2':'08:00-12:00','H':'08:30-16:30','H1':'08:30-16:06','I':'09:00-17:00','I1':'09:00-16:36','J':'09:15-15:15','K':'10:00-18:00','K1':'10:00-17:36','K2':'10:00-14:00','L':'12:00-20:00','L1':'12:00-19:36','L2':'11:30-19:30','M':'12:30-20:30','M1':'12:30-20:06','N':'13:00-21:00','N1':'13:00-20:36','N2':'13:30-21:30','O':'14:00-22:00','O1':'14:00-21:36','P':'14:30-22:30','P1':'14:30-22:06','Q':'15:00-23:00','Q1':'15:00-22:36','R':'15:30-23:30','R1':'15:30-23:06','S':'16:00-24:00','S1':'16:00-23:36','T':'16:30-24:30','T1':'16:30-24:06','U':'17:00-01:00','U1':'17:00-24:36','V':'17:30-21:30','W':'12:00-18:00','X':'09:30-17:30','Y':'20:00-24:00','Z':'11:00-19:00'};
 
 function t(k){return T[lang][k]||T.pt[k]||k;}
+
+// ── NIGHT DETECTION ───────────────────────────────────────────────
+function isNightShift(timeStr){
+  if(!timeStr)return false;
+  const[st,et]=timeStr.split('-');
+  const sh=parseInt(st.split(':')[0]);
+  const eh=parseInt(et.split(':')[0]);
+  const em=parseInt(et.split(':')[1]||0);
+  // Night: starts at or after 20:00, OR ends after midnight (end hour < start hour or end > 24)
+  return sh>=20||(eh<sh)||(eh===0&&em>0)||(parseInt(et.replace(':',''))>2400);
+}
+function isEveningShift(timeStr){
+  if(!timeStr)return false;
+  const sh=parseInt(timeStr.split(':')[0]);
+  return sh>=14&&sh<20&&!isNightShift(timeStr);
+}
+function isMorningShift(timeStr){
+  if(!timeStr)return false;
+  const sh=parseInt(timeStr.split(':')[0]);
+  return sh<14;
+}
 
 // ── LANG ──────────────────────────────────────────────────────────
 function setLang(l){
@@ -365,7 +420,7 @@ function setLang(l){
   document.documentElement.lang=l==='pt'?'pt-BR':'it';
   applyT();renderSteps();renderLegend();
   if(allNames.length)renderNameList();
-  if(selectedSchedule.length){const mv=document.getElementById('scheduleMonth').value;if(mv){const[y,m]=mv.split('-').map(Number);renderScheduleTable(y,m);}}
+  if(Object.keys(selectedSchedule).length)renderSchedule();
 }
 function applyT(){
   const $=id=>document.getElementById(id);
@@ -388,9 +443,9 @@ function applyT(){
   $('t-add-name-label').textContent=t('add-name-label');$('manualName').placeholder=t('name-ph');
   $('t-add-name-btn').textContent=t('add-name-btn');$('t-back3').textContent=t('back3');
   $('btnToStep4').textContent=t('next3');
+  $('t-colleagues-title').textContent=t('colleagues-title');
+  $('t-summary-title').textContent=t('summary-title');$('t-night-alert').textContent=t('night-alert');
   $('t-s4-title').textContent=t('s4-title');
-  $('t-th-day').textContent=t('th-day');$('t-th-weekday').textContent=t('th-weekday');
-  $('t-th-code').textContent=t('th-code');$('t-th-time').textContent=t('th-time');
   $('t-no-schedule').textContent=t('no-schedule');
   $('t-back4').textContent=t('back4');$('t-next4').textContent=t('next4');
   $('t-s5-title').textContent=t('s5-title');$('t-s5-desc').textContent=t('s5-desc');
@@ -419,20 +474,13 @@ function renderSteps(){
 window.addEventListener('DOMContentLoaded',()=>{
   const n=new Date();
   document.getElementById('scheduleMonth').value=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`;
-  setLang(lang);
-  renderLegend();
-  setupDragDrop();
+  setLang(lang);renderLegend();setupDragDrop();
 });
 function setupDragDrop(){
   const z=document.getElementById('uploadZone');
   z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag-over');});
   z.addEventListener('dragleave',()=>z.classList.remove('drag-over'));
-  z.addEventListener('drop',e=>{
-    e.preventDefault();z.classList.remove('drag-over');
-    const f=e.dataTransfer.files[0];
-    if(f&&f.type==='application/pdf')processPDF(f);
-    else showModal(t('attention'),t('invalidFile'));
-  });
+  z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')processPDF(f);else showModal(t('attention'),t('invalidFile'));});
 }
 
 // ── PDF ───────────────────────────────────────────────────────────
@@ -444,92 +492,48 @@ async function processPDF(file){
     const ab=await file.arrayBuffer();
     const pdf=await pdfjsLib.getDocument({data:ab}).promise;
     let txt='';
-    for(let i=1;i<=pdf.numPages;i++){
-      const pg=await pdf.getPage(i);
-      const ct=await pg.getTextContent();
-      txt+=ct.items.map(x=>x.str).join(' ')+'\n';
-    }
+    for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const ct=await pg.getTextContent();txt+=ct.items.map(x=>x.str).join(' ')+'\n';}
     document.getElementById('manualText').value=txt;
-    detectMonth(txt);
-    parseSchedule(txt);
+    detectMonth(txt);parseSchedule(txt);
     document.getElementById('pdfLoading').style.display='none';
-    const s=document.getElementById('uploadStatus');
-    s.style.display='block';
+    const s=document.getElementById('uploadStatus');s.style.display='block';
     s.textContent=`✅ PDF lido! (${pdf.numPages} ${t('pages')}) — ${allNames.length} ${t('workers')}`;
     document.getElementById('uploadZone').querySelector('.upload-text').textContent='✅ '+file.name;
-  }catch(err){
-    document.getElementById('pdfLoading').style.display='none';
-    showModal(t('attention'),t('errPDF')+err.message);
-  }
+  }catch(err){document.getElementById('pdfLoading').style.display='none';showModal(t('attention'),t('errPDF')+err.message);}
 }
 function detectMonth(text){
-  const all=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre',
-             'janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const all=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre','janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
   const low=text.toLowerCase();
-  all.forEach((m,i)=>{
-    if(low.includes(m)){
-      const idx=i%12;
-      const y=(text.match(/20\d{2}/)||[new Date().getFullYear()])[0];
-      document.getElementById('scheduleMonth').value=`${y}-${String(idx+1).padStart(2,'0')}`;
-    }
-  });
+  all.forEach((m,i)=>{if(low.includes(m)){const idx=i%12;const y=(text.match(/20\d{2}/)||[new Date().getFullYear()])[0];document.getElementById('scheduleMonth').value=`${y}-${String(idx+1).padStart(2,'0')}` ;}});
 }
-function parseManualText(){
-  const txt=document.getElementById('manualText').value;
-  if(!txt.trim()){showModal(t('attention'),t('emptyText'));return;}
-  parseSchedule(txt);
-  showModal('✅',t('processed').replace('{n}',allNames.length));
-}
+function parseManualText(){const txt=document.getElementById('manualText').value;if(!txt.trim()){showModal(t('attention'),t('emptyText'));return;}parseSchedule(txt);showModal('✅',t('processed').replace('{n}',allNames.length));}
 
 // ── PARSER ────────────────────────────────────────────────────────
-// Handles the flat token-stream format produced by PDF.js from table-style schedules:
-// "01-mar 02-mar ... Dom Lun ... NAME1 CODE CODE ... NAME2 CODE CODE ..."
 function parseSchedule(text){
   rawScheduleData={};allNames=[];
-
   const WD=/^(dom|lun|mar|mer|gio|ven|sab|sun|mon|tue|wed|thu|fri|sat|seg|ter|qua|qui|sex)$/i;
   const DHDR=/^\d{1,2}[-\/](mar|apr|mag|giu|lug|ago|set|ott|nov|dic|gen|feb|jan|may|jun|jul|aug|sep|oct|dec)$/i;
-  // shift code: 1-2 uppercase letters + optional digit, NOT a common word
-  const SCODE=/^(RL|ST|FE|G[12]?|F[12]?|K[12]?|C[12]?|N[12]?|Q[12]?|S[12]?|E[12]?|O[12]?|P[12]?|R[12]?|T[12]?|U[12]?|D[12]?|H[12]?|I[12]?|L[12]?|M[12]?|B[12]?|V|W|X|Y|Z|J)$/;
-  // name token: all letters (incl accented), length >= 2, NOT a shift code, NOT a weekday
+  const SCODE=/^(RL|ST|FE|G[12]?|F[12]?|K[12]?|C[12]?|N[12]?|Q[12]?|S[12]?|E[12]?|O[12]?|P[12]?|R[12]?|T[12]?|U[12]?|D[12]?|H[12]?|I[12]?|L[12]?|M[12]?|B[12]?|V|W|X|Y|Z|J|A)$/;
   function isName(s){return /^[A-Z\u00C0-\u024F']{2,}$/.test(s)&&!SCODE.test(s)&&!WD.test(s)&&!DHDR.test(s);}
-
   const tokens=text.split(/\s+/).filter(Boolean);
-
-  // Find day-header start
   let hStart=-1;
   for(let i=0;i<tokens.length-10;i++){if(DHDR.test(tokens[i])){hStart=i;break;}}
-
   if(hStart>=0){
-    // Collect day numbers from header
     let dayNums=[],i=hStart;
-    while(i<tokens.length&&(DHDR.test(tokens[i])||(/^\d{1,2}$/.test(tokens[i])&&parseInt(tokens[i])>=1&&parseInt(tokens[i])<=31))){
-      const m=tokens[i].match(/^(\d{1,2})/);if(m)dayNums.push(parseInt(m[1]));i++;
-    }
+    while(i<tokens.length&&(DHDR.test(tokens[i])||(/^\d{1,2}$/.test(tokens[i])&&parseInt(tokens[i])>=1&&parseInt(tokens[i])<=31))){const m=tokens[i].match(/^(\d{1,2})/);if(m)dayNums.push(parseInt(m[1]));i++;}
     const numDays=dayNums.length;
-    if(numDays<20){allNames=[];rawScheduleData={};}
-    else{
-      // Skip weekday row
+    if(numDays>=20){
       let j=i;
       const wdSlice=tokens.slice(j,j+numDays+3);
       if(wdSlice.filter(tk=>WD.test(tk)).length>numDays*0.4)j+=wdSlice.filter(tk=>WD.test(tk)).length;
-
-      // Parse employee rows
       while(j<tokens.length){
         const tk=tokens[j];
-        if(DHDR.test(tk)||WD.test(tk)||/^(MARZO|APRILE|MAGGIO|GIUGNO|LUGLIO|AGOSTO|SETTEMBRE|OTTOBRE|NOVEMBRE|DICEMBRE|GENNAIO|FEBBRAIO|JANUARY|FEBRUARY|MARCH|APRIL|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER)$/i.test(tk)){j++;continue;}
-        // Read name (1-4 tokens)
+        if(DHDR.test(tk)||WD.test(tk)||/^(MARZO|APRILE|MAGGIO|GIUGNO|LUGLIO|AGOSTO|SETTEMBRE|OTTOBRE|NOVEMBRE|DICEMBRE|GENNAIO|FEBBRAIO)$/i.test(tk)){j++;continue;}
         let nameTks=[],k=j;
         while(k<tokens.length&&nameTks.length<4&&isName(tokens[k])){nameTks.push(tokens[k]);k++;}
         if(!nameTks.length){j++;continue;}
-        // Read codes
         let codes=[],skip=0;
-        while(k<tokens.length&&codes.length<numDays){
-          const c=tokens[k].toUpperCase();
-          if(WD.test(c)||DHDR.test(c)){k++;skip++;if(skip>3)break;continue;}
-          if(/^[A-Z]{1,2}\d?$/.test(c)){codes.push(c);k++;}
-          else break;
-        }
+        while(k<tokens.length&&codes.length<numDays){const c=tokens[k].toUpperCase();if(WD.test(c)||DHDR.test(c)){k++;skip++;if(skip>3)break;continue;}if(/^[A-Z]{1,2}\d?$/.test(c)){codes.push(c);k++;}else break;}
         if(codes.length>=Math.floor(numDays*0.6)){
           const name=nameTks.join(' ');
           if(!rawScheduleData[name]){rawScheduleData[name]={};allNames.push(name);}
@@ -539,25 +543,15 @@ function parseSchedule(text){
       }
     }
   }
-
-  // Fallback: line-by-line "NAME\n01 A 02 B..."
   if(!allNames.length){
-    const lines=text.split(/\n|\r/).map(l=>l.trim()).filter(Boolean);
-    let cur=null;
+    const lines=text.split(/\n|\r/).map(l=>l.trim()).filter(Boolean);let cur=null;
     for(const line of lines){
       const tks=line.split(/\s+/);
-      if(tks.every(tk=>/^[A-Z\u00C0-\u024F']+$/.test(tk))&&tks.join('').length>3&&!tks.some(tk=>SCODE.test(tk))){
-        cur=line.toUpperCase().trim();
-        if(!rawScheduleData[cur]){rawScheduleData[cur]={};allNames.push(cur);}
-      }else if(cur){
-        const p=/(\d{1,2})\s*[-\/]?\s*([A-Z]{1,2}\d?)/g;let m;
-        while((m=p.exec(line))!==null){const d=parseInt(m[1]);if(d>=1&&d<=31)rawScheduleData[cur][String(d)]=m[2].toUpperCase();}
-      }
+      if(tks.every(tk=>/^[A-Z\u00C0-\u024F']+$/.test(tk))&&tks.join('').length>3&&!tks.some(tk=>SCODE.test(tk))){cur=line.toUpperCase().trim();if(!rawScheduleData[cur]){rawScheduleData[cur]={};allNames.push(cur);}}
+      else if(cur){const p=/(\d{1,2})\s*[-\/]?\s*([A-Z]{1,2}\d?)/g;let m;while((m=p.exec(line))!==null){const d=parseInt(m[1]);if(d>=1&&d<=31)rawScheduleData[cur][String(d)]=m[2].toUpperCase();}}
     }
   }
-
-  allNames=[...new Set(allNames)];
-  renderNameList();saveHistory();
+  allNames=[...new Set(allNames)];renderNameList();saveHistory();
 }
 
 // ── LEGEND ────────────────────────────────────────────────────────
@@ -565,131 +559,196 @@ function renderLegend(){
   const g=document.getElementById('legendGrid');g.innerHTML='';
   Object.entries(legend).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([code,time])=>{
     const el=document.createElement('div');el.className='legend-item';
-    el.innerHTML=`<span class="legend-code">${code}</span><input class="legend-input" type="text" value="${time}" onchange="legend['${code}']=this.value"><button onclick="delLegend('${code}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:2px 4px">✕</button>`;
+    const isN=isNightShift(time);
+    el.innerHTML=`<span class="legend-code" style="${isN?'color:var(--night)':''}">${code}${isN?' 🌙':''}</span><input class="legend-input" type="text" value="${time}" onchange="legend['${code}']=this.value"><button onclick="delLegend('${code}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:2px 4px">✕</button>`;
     g.appendChild(el);
   });
 }
-function addLegendItem(){
-  const c=document.getElementById('newCode').value.trim().toUpperCase();
-  const tm=document.getElementById('newTime').value.trim();
-  if(!c||!tm){showModal(t('attention'),t('fillBoth'));return;}
-  legend[c]=tm;document.getElementById('newCode').value='';document.getElementById('newTime').value='';renderLegend();
-}
+function addLegendItem(){const c=document.getElementById('newCode').value.trim().toUpperCase();const tm=document.getElementById('newTime').value.trim();if(!c||!tm){showModal(t('attention'),t('fillBoth'));return;}legend[c]=tm;document.getElementById('newCode').value='';document.getElementById('newTime').value='';renderLegend();}
 function delLegend(code){delete legend[code];renderLegend();}
 
-// ── NAMES ─────────────────────────────────────────────────────────
+// ── NAMES (MULTI-SELECT) ──────────────────────────────────────────
 function renderNameList(){
-  const list=document.getElementById('nameList');
-  const na=document.getElementById('noNamesAlert');
+  const list=document.getElementById('nameList');const na=document.getElementById('noNamesAlert');
   if(!allNames.length){list.innerHTML='';na.style.display='flex';return;}
   na.style.display='none';list.innerHTML='';
   allNames.forEach(name=>{
     const ch=document.createElement('div');
-    ch.className='name-chip'+(name===selectedName?' selected':'');
-    ch.textContent=name;ch.onclick=()=>selectName(name);
+    ch.className='name-chip'+(selectedNames.includes(name)?' selected':'');
+    ch.textContent=name;ch.onclick=()=>toggleName(name);
     list.appendChild(ch);
   });
 }
 function filterNames(q){document.querySelectorAll('.name-chip').forEach(c=>{c.style.display=c.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';});}
-function selectName(name){
-  selectedName=name;
-  document.querySelectorAll('.name-chip').forEach(c=>c.classList.toggle('selected',c.textContent===name));
-  document.getElementById('btnToStep4').disabled=false;
+function toggleName(name){
+  const idx=selectedNames.indexOf(name);
+  if(idx>=0)selectedNames.splice(idx,1);else selectedNames.push(name);
+  renderNameList();
+  document.getElementById('btnToStep4').disabled=selectedNames.length===0;
 }
-function addManualName(){
-  const n=document.getElementById('manualName').value.trim().toUpperCase();
-  if(!n)return;
-  if(!allNames.includes(n)){allNames.push(n);rawScheduleData[n]={};}
-  document.getElementById('manualName').value='';renderNameList();selectName(n);
-}
+function addManualName(){const n=document.getElementById('manualName').value.trim().toUpperCase();if(!n)return;if(!allNames.includes(n)){allNames.push(n);rawScheduleData[n]={};}document.getElementById('manualName').value='';renderNameList();if(!selectedNames.includes(n))toggleName(n);}
 
-// ── SCHEDULE ──────────────────────────────────────────────────────
-function buildSchedule(){
-  if(!selectedName)return;
+// ── BUILD SCHEDULE ────────────────────────────────────────────────
+function buildAllSchedules(){
   const mv=document.getElementById('scheduleMonth').value;
   let year,month;
   if(mv){[year,month]=mv.split('-').map(Number);}else{const n=new Date();year=n.getFullYear();month=n.getMonth()+1;}
   const dim=new Date(year,month,0).getDate();
-  const pd=rawScheduleData[selectedName]||{};
   const WD=t('weekdays');
-  selectedSchedule=[];
-  for(let d=1;d<=dim;d++){
-    const dt=new Date(year,month-1,d);
-    const code=pd[String(d)]||null;
-    selectedSchedule.push({day:d,date:`${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`,weekday:WD[dt.getDay()],isSun:dt.getDay()===0,code,time:code?(legend[code]||null):null,isRest:code&&FOLGA.includes(code),year,month});
-  }
-  renderScheduleTable(year,month);
+  selectedSchedule={};
+  selectedNames.forEach(name=>{
+    const pd=rawScheduleData[name]||{};
+    selectedSchedule[name]=[];
+    for(let d=1;d<=dim;d++){
+      const dt=new Date(year,month-1,d);
+      const code=pd[String(d)]||null;
+      const time=code?(legend[code]||null):null;
+      selectedSchedule[name].push({day:d,date:`${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`,weekday:WD[dt.getDay()],isSun:dt.getDay()===0,code,time,isRest:code&&REST_CODES.includes(code),isNight:isNightShift(time),isEvening:isEveningShift(time),isMorning:isMorningShift(time),year,month});
+    }
+  });
+  activeColleague=selectedNames[0]||'';
+  renderColleagueTabs();renderSummary();renderSchedule();
 }
-function renderScheduleTable(year,month){
-  const body=document.getElementById('scheduleBody');
+
+// ── COLLEAGUE TABS ────────────────────────────────────────────────
+function renderColleagueTabs(){
+  const wrap=document.getElementById('colleagueTabs');
+  const bar=document.getElementById('colleagueTabsBar');
+  if(selectedNames.length<=1){wrap.style.display='none';return;}
+  wrap.style.display='block';bar.innerHTML='';
+  selectedNames.forEach(name=>{
+    const tab=document.createElement('div');tab.className='col-tab'+(name===activeColleague?' active':'');
+    tab.innerHTML=`<span onclick="switchColleague('${name}')">${name}</span>`;
+    bar.appendChild(tab);
+  });
+}
+function switchColleague(name){activeColleague=name;renderColleagueTabs();renderSummary();renderSchedule();}
+
+// ── SUMMARY ───────────────────────────────────────────────────────
+function renderSummary(){
+  const entries=selectedSchedule[activeColleague]||[];
+  const work=entries.filter(e=>e.code&&!e.isRest&&e.time);
+  const mornings=work.filter(e=>e.isMorning).length;
+  const evenings=work.filter(e=>e.isEvening).length;
+  const nights=work.filter(e=>e.isNight).length;
+  const rests=entries.filter(e=>e.isRest).length;
+  const totalMins=work.reduce((acc,e)=>{
+    if(!e.time)return acc;
+    const[st,et]=e.time.split('-');
+    const[sh,sm]=st.split(':').map(Number);let[eh,em]=et.split(':').map(Number);
+    let mins=(eh*60+em)-(sh*60+sm);if(mins<0)mins+=24*60;
+    return acc+mins;
+  },0);
+  const totalHours=Math.round(totalMins/60);
+  const grid=document.getElementById('summaryGrid');
+  grid.innerHTML=`
+    <div class="summary-card"><div class="summary-icon">☀️</div><div class="summary-val">${mornings}</div><div class="summary-label">${t('sumMorning')}</div></div>
+    <div class="summary-card"><div class="summary-icon">🌆</div><div class="summary-val">${evenings}</div><div class="summary-label">${t('sumAfternoon')}</div></div>
+    <div class="summary-card"><div class="summary-icon">🌙</div><div class="summary-val" style="color:var(--night)">${nights}</div><div class="summary-label">${t('sumNight')}</div></div>
+    <div class="summary-card"><div class="summary-icon">🏖️</div><div class="summary-val" style="color:var(--text2)">${rests}</div><div class="summary-label">${t('sumRest')}</div></div>
+    <div class="summary-card"><div class="summary-icon">💼</div><div class="summary-val" style="color:var(--accent3)">${work.length}</div><div class="summary-label">${t('sumWork')}</div></div>
+    <div class="summary-card"><div class="summary-icon">⏱️</div><div class="summary-val" style="color:var(--accent2)">${totalHours}</div><div class="summary-label">${t('sumHours')}</div></div>
+  `;
+  const nightAlert=document.getElementById('nightAlert');
+  nightAlert.style.display=nights>0?'flex':'none';
+}
+
+// ── RENDER SCHEDULE TABLE ─────────────────────────────────────────
+function renderSchedule(){
+  const entries=selectedSchedule[activeColleague]||[];
+  const year=entries[0]?.year;const month=entries[0]?.month;
   const MONTHS=t('months');
-  document.getElementById('selectedNameDisplay').textContent=selectedName;
-  const work=selectedSchedule.filter(s=>s.code&&!s.isRest&&s.time).length;
-  const rest=selectedSchedule.filter(s=>s.isRest).length;
-  const unk=selectedSchedule.filter(s=>s.code&&!s.time&&!s.isRest).length;
-  document.getElementById('scheduleSubtitle').textContent=`${MONTHS[month-1]} ${year} — ${work} ${t('shifts')}`;
+  document.getElementById('selectedNameDisplay').textContent=activeColleague;
+  const work=entries.filter(e=>e.code&&!e.isRest&&e.time).length;
+  const nights=entries.filter(e=>e.isNight&&!e.isRest).length;
+  document.getElementById('scheduleSubtitle').textContent=month?`${MONTHS[month-1]} ${year} — ${work} ${t('shifts')}`:'';
   document.getElementById('scheduleStats').innerHTML=
-    `<span class="badge badge-blue">📅 ${MONTHS[month-1]} ${year}</span>`+
+    (month?`<span class="badge badge-blue">📅 ${MONTHS[month-1]} ${year}</span>`:'') +
     `<span class="badge badge-yellow">⚡ ${work} ${t('shifts')}</span>`+
-    (rest?`<span class="badge" style="background:rgba(139,144,168,.15);color:var(--text2)">🏖️ ${rest} ${t('rest').toLowerCase()}</span>`:'')+
-    (unk?`<span class="badge" style="background:rgba(255,92,92,.15);color:var(--danger)">⚠️ ${unk} ${t('unknown')}</span>`:'');
-  if(!work&&!rest){document.getElementById('noScheduleMsg').style.display='flex';body.innerHTML='';return;}
+    (nights?`<span class="badge badge-night">🌙 ${nights} ${t('night')}</span>`:'');
+  // Build table header
+  const head=document.getElementById('tableHead');
+  head.innerHTML=`<th>${t('th-day')}</th><th>${t('th-weekday')}</th><th>${t('th-code')}</th><th>${t('th-time')}</th><th>${t('th-alarm')}</th>`;
+  const body=document.getElementById('scheduleBody');
+  if(!entries.filter(e=>e.code).length){document.getElementById('noScheduleMsg').style.display='flex';body.innerHTML='';return;}
   document.getElementById('noScheduleMsg').style.display='none';
   body.innerHTML='';
-  selectedSchedule.forEach(e=>{
+  entries.forEach(e=>{
     if(!e.code)return;
-    const tr=document.createElement('tr');if(e.isSun)tr.classList.add('highlight-row');
-    let cc,tc;
+    const tr=document.createElement('tr');
+    if(e.isSun)tr.classList.add('highlight-row');
+    else if(e.isNight&&!e.isRest)tr.classList.add('night-row');
+    let cc,tc,alarm='';
     if(e.isRest){
       cc=`<span class="shift-code" style="background:rgba(139,144,168,.1);color:var(--text2)">${e.code}</span>`;
       tc=`<span class="tag-rest">${t('rest')}</span>`;
     }else{
-      cc=`<span class="shift-code">${e.code}</span>`;
-      tc=e.time?`<span class="shift-time">${e.time.replace('-',' → ')}</span>`:`<span style="color:var(--danger);font-size:13px">⚠️ ${e.code} — ${t('unknown')}</span>`;
+      cc=`<span class="shift-code${e.isNight?' night':''}">${e.code}${e.isNight?' 🌙':''}</span>`;
+      if(e.time){
+        tc=`<span class="shift-time${e.isNight?' night':''}">${e.time.replace('-',' → ')}</span>`;
+        alarm=`<span class="tag-alarm">🔔 ${t('alarm')}</span>`;
+      }else{tc=`<span style="color:var(--danger);font-size:13px">⚠️ ${e.code} — ${t('unknown')}</span>`;}
     }
-    tr.innerHTML=`<td><span class="day-num">${String(e.day).padStart(2,'0')}</span></td><td><span class="day-name" style="${e.isSun?'color:var(--danger);font-weight:600':''}">${e.weekday}</span></td><td>${cc}</td><td>${tc}</td>`;
+    tr.innerHTML=`<td><span class="day-num">${String(e.day).padStart(2,'0')}</span></td><td><span class="day-name" style="${e.isSun?'color:var(--danger);font-weight:600':e.isNight&&!e.isRest?'color:var(--night)':''}">${e.weekday}</span></td><td>${cc}</td><td>${tc}</td><td>${alarm}</td>`;
     body.appendChild(tr);
   });
 }
 
 // ── EXPORT ────────────────────────────────────────────────────────
-function genICS(){
-  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EscalaFacil//','CALSCALE:GREGORIAN','METHOD:PUBLISH',`X-WR-CALNAME:Turni ${selectedName}`,'X-WR-TIMEZONE:Europe/Rome'];
-  selectedSchedule.filter(e=>e.code&&e.time&&!e.isRest).forEach(e=>{
+function currentEntries(){return selectedSchedule[activeColleague]||[];}
+function genICS(name,entries){
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EscalaFacil//','CALSCALE:GREGORIAN','METHOD:PUBLISH',`X-WR-CALNAME:Turni ${name}`,'X-WR-TIMEZONE:Europe/Rome'];
+  entries.filter(e=>e.code&&e.time&&!e.isRest).forEach(e=>{
     const[st,et]=e.time.split('-');const[sh,sm]=st.split(':').map(Number);let[eh,em]=et.split(':').map(Number);
     const sd=new Date(e.year,e.month-1,e.day,sh,sm);let ed=new Date(e.year,e.month-1,e.day,eh,em);
     if(eh<sh||(eh===sh&&em<sm))ed.setDate(ed.getDate()+1);
     const fmt=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}00`;
-    lines.push('BEGIN:VEVENT',`UID:esc-${e.date}-${e.code}@app`,`DTSTART:${fmt(sd)}`,`DTEND:${fmt(ed)}`,`SUMMARY:Turno ${e.code} — ${selectedName}`,`DESCRIPTION:${e.code} ${e.time}`,'BEGIN:VALARM','TRIGGER:-PT30M','ACTION:DISPLAY','DESCRIPTION:Turno','END:VALARM','END:VEVENT');
+    const nightTag=e.isNight?' 🌙':'';
+    lines.push('BEGIN:VEVENT',`UID:esc-${e.date}-${e.code}-${name.replace(/\s/g,'')}@app`,`DTSTART:${fmt(sd)}`,`DTEND:${fmt(ed)}`,`SUMMARY:Turno ${e.code}${nightTag} — ${name}`,`DESCRIPTION:${e.code} ${e.time}${e.isNight?' (Turno notturno/noturno)':''}`,
+      'BEGIN:VALARM','TRIGGER:-PT30M','ACTION:DISPLAY',`DESCRIPTION:🔔 Turno ${e.code} tra 30 minuti`,'END:VALARM','END:VEVENT');
   });
   lines.push('END:VCALENDAR');return lines.join('\r\n');
 }
 function exportICS(){
-  if(!selectedSchedule.length){showModal(t('attention'),t('noData'));return;}
-  const blob=new Blob([genICS()],{type:'text/calendar;charset=utf-8'});
+  if(!currentEntries().length){showModal(t('attention'),t('noData'));return;}
+  // Export all selected colleagues in one file
+  const allLines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EscalaFacil//','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-TIMEZONE:Europe/Rome'];
+  selectedNames.forEach(name=>{
+    const entries=selectedSchedule[name]||[];
+    entries.filter(e=>e.code&&e.time&&!e.isRest).forEach(e=>{
+      const[st,et]=e.time.split('-');const[sh,sm]=st.split(':').map(Number);let[eh,em]=et.split(':').map(Number);
+      const sd=new Date(e.year,e.month-1,e.day,sh,sm);let ed=new Date(e.year,e.month-1,e.day,eh,em);
+      if(eh<sh||(eh===sh&&em<sm))ed.setDate(ed.getDate()+1);
+      const fmt=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}00`;
+      allLines.push('BEGIN:VEVENT',`UID:esc-${e.date}-${e.code}-${name.replace(/\s/g,'')}@app`,`DTSTART:${fmt(sd)}`,`DTEND:${fmt(ed)}`,`SUMMARY:${selectedNames.length>1?name+' — ':''}Turno ${e.code}${e.isNight?' 🌙':''}`,`DESCRIPTION:${e.code} ${e.time}`,
+        'BEGIN:VALARM','TRIGGER:-PT30M','ACTION:DISPLAY',`DESCRIPTION:🔔 Turno ${e.code} — 30min`,'END:VALARM','END:VEVENT');
+    });
+  });
+  allLines.push('END:VCALENDAR');
+  const blob=new Blob([allLines.join('\r\n')],{type:'text/calendar;charset=utf-8'});
   const url=URL.createObjectURL(blob);const a=document.createElement('a');
-  a.href=url;a.download=`turni_${selectedName.replace(/\s+/g,'_')}.ics`;a.click();URL.revokeObjectURL(url);
+  a.href=url;a.download=`turni_${selectedNames[0].replace(/\s+/g,'_')}.ics`;a.click();URL.revokeObjectURL(url);
   showModal('✅',t('icsOk'));
 }
 function exportGoogleCalendar(){
-  const work=selectedSchedule.filter(e=>e.code&&e.time&&!e.isRest);
+  const work=currentEntries().filter(e=>e.code&&e.time&&!e.isRest);
   if(!work.length){showModal(t('attention'),t('noData'));return;}
   showModal('Google Calendar',t('gcalMsg').replace('{n}',Math.min(work.length,5)),()=>{
     work.slice(0,5).forEach((e,idx)=>setTimeout(()=>{
       const[st,et]=e.time.split('-');const[sh,sm]=st.split(':').map(Number);let[eh,em]=et.split(':').map(Number);
       const sd=new Date(e.year,e.month-1,e.day,sh,sm);let ed=new Date(e.year,e.month-1,e.day,eh,em);if(eh<sh)ed.setDate(ed.getDate()+1);
       const fmt=d=>d.toISOString().replace(/[-:]/g,'').replace('.000','');
-      window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Turno+${e.code}+-+${encodeURIComponent(selectedName)}&dates=${fmt(sd)}/${fmt(ed)}`,'_blank');
+      window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Turno+${e.code}${e.isNight?'+%F0%9F%8C%99':''}-+${encodeURIComponent(activeColleague)}&dates=${fmt(sd)}/${fmt(ed)}`,'_blank');
     },idx*500));
     if(work.length>5)showModal('💡',t('gcalTip').replace('{n}',work.length));
   });
 }
 function copyToClipboard(){
-  if(!selectedSchedule.length)return;
-  const mv=document.getElementById('scheduleMonth').value||`${new Date().getFullYear()}-${new Date().getMonth()+1}`;
-  const[y,m]=mv.split('-').map(Number);const MONTHS=t('months');
-  let txt=`TURNI — ${selectedName}\n${MONTHS[m-1]} ${y}\n${'─'.repeat(40)}\n`;
-  selectedSchedule.forEach(e=>{if(!e.code)return;txt+=`${String(e.day).padStart(2,'0')} ${e.weekday}  ${e.code}  ${e.isRest?t('rest'):e.time||'?'}\n`;});
+  if(!currentEntries().length)return;
+  const entries=currentEntries();const MONTHS=t('months');
+  const y=entries[0]?.year;const m=entries[0]?.month;
+  let txt=`TURNI — ${activeColleague}\n${m?MONTHS[m-1]+' '+y:''}\n${'─'.repeat(40)}\n`;
+  entries.forEach(e=>{if(!e.code)return;txt+=`${String(e.day).padStart(2,'0')} ${e.weekday}  ${e.code}  ${e.isRest?t('rest'):e.time||'?'}${e.isNight?' 🌙':''}\n`;});
   navigator.clipboard.writeText(txt).then(()=>showModal('✅',t('copied'))).catch(()=>showModal('Turni',txt));
 }
 function printSchedule(){window.print();}
@@ -703,8 +762,7 @@ function saveHistory(){
 }
 function renderHistory(){
   const card=document.getElementById('historyCard');const list=document.getElementById('historyList');
-  if(!appHistory.length){card.style.display='none';return;}
-  card.style.display='block';list.innerHTML='';
+  if(!appHistory.length){card.style.display='none';return;}card.style.display='block';list.innerHTML='';
   appHistory.slice(0,5).forEach(e=>{
     const[y,mo]=(e.month||'').split('-');const MONTHS=t('months');const mn=mo?MONTHS[parseInt(mo)-1]:'—';
     const item=document.createElement('div');item.className='history-item';
@@ -712,20 +770,15 @@ function renderHistory(){
     list.appendChild(item);
   });
 }
-function loadHistory(id){
-  const e=appHistory.find(h=>h.id===id);if(!e)return;
-  allNames=e.names;rawScheduleData=e.data;
-  if(e.month)document.getElementById('scheduleMonth').value=e.month;
-  renderNameList();showModal('✅',`${allNames.length} ${t('workers')} ${t('loaded')}. ${t('advanceTo')}`);
-}
+function loadHistory(id){const e=appHistory.find(h=>h.id===id);if(!e)return;allNames=e.names;rawScheduleData=e.data;if(e.month)document.getElementById('scheduleMonth').value=e.month;renderNameList();showModal('✅',`${allNames.length} ${t('workers')} ${t('loaded')}. ${t('advanceTo')}`);}
 
 // ── NAVIGATION ────────────────────────────────────────────────────
 function goToStep(step){
   if(step===3)renderNameList();
-  if(step===4)buildSchedule();
+  if(step===4)buildAllSchedules();
   if(step===5){
-    const c=selectedSchedule.filter(e=>e.code&&e.time&&!e.isRest).length;
-    document.getElementById('exportSummary').textContent=`${c} ${t('shifts')} — ${selectedName}`;
+    const total=selectedNames.reduce((a,n)=>(selectedSchedule[n]||[]).filter(e=>e.code&&e.time&&!e.isRest).length+a,0);
+    document.getElementById('exportSummary').textContent=`${total} ${t('shifts')} — ${selectedNames.join(', ')}`;
   }
   currentStep=step;
   document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i+1===step));
@@ -733,8 +786,6 @@ function goToStep(step){
   document.getElementById('progressFill').style.width=(step/5*100)+'%';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
-// ── MODAL ─────────────────────────────────────────────────────────
 function showModal(title,body,onConfirm){
   document.getElementById('modalTitle').textContent=title;
   document.getElementById('modalBody').textContent=body;
