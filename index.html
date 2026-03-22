@@ -377,8 +377,8 @@ const T = {
 let lang = localStorage.getItem('escala_lang') || 'pt';
 let currentStep=1,allNames=[],selectedName='',rawScheduleData={},selectedSchedule=[];
 let history=JSON.parse(localStorage.getItem('escala_history')||'[]');
-const FOLGA_CODES=['F','FL','FE','DSR','F1','FG','FO'];
-let legend={'A':'03:15-11:15','B':'04:30-12:30','B1':'04:30-12:06','C':'05:00-13:00','C1':'05:00-12:36','C2':'05:30-13:30','D':'06:00-14:00','D1':'06:00-13:36','E':'06:30-14:30','E1':'06:30-14:06','F':'07:00-15:00','F1':'07:00-14:36','G':'08:00-16:00','G1':'08:00-15:36','G2':'08:00-12:00','H':'08:30-16:30','H1':'08:30-16:06','I':'09:00-17:00','I1':'09:00-16:36','J':'09:15-15:15','K':'10:00-18:00','K1':'10:00-17:36','K2':'10:00-14:00','L':'12:00-20:00','L1':'12:00-19:36','L2':'11:30-19:30','M':'12:30-20:30','M1':'12:30-20:06','N':'13:00-21:00','N1':'13:00-20:36','N2':'13:30-21:30','O':'14:00-22:00','O1':'14:00-21:36','P':'14:30-22:30','P1':'14:30-22:06','Q':'15:00-23:00','Q1':'15:00-22:36','R':'15:30-23:30','R1':'15:30-23:06','S':'16:00-24:00','S1':'16:00-23:36','T':'16:30-24:30','T1':'16:30-24:06','U':'17:00-01:00','U1':'17:00-24:36','V':'17:30-21:30','W':'12:00-18:00','X':'09:30-17:30','Y':'20:00-24:00','Z':'11:00-19:00'};
+const FOLGA_CODES=['FE','RL','ST','FL','DSR','FG','FO','REC','FP'];
+let legend={'FE':'Ferie/Férias','RL':'Riposo/Folga','ST':'Straordinario/Extra','A':'03:15-11:15','B':'04:30-12:30','B1':'04:30-12:06','C':'05:00-13:00','C1':'05:00-12:36','C2':'05:30-13:30','D':'06:00-14:00','D1':'06:00-13:36','E':'06:30-14:30','E1':'06:30-14:06','F':'07:00-15:00','F1':'07:00-14:36','G':'08:00-16:00','G1':'08:00-15:36','G2':'08:00-12:00','H':'08:30-16:30','H1':'08:30-16:06','I':'09:00-17:00','I1':'09:00-16:36','J':'09:15-15:15','K':'10:00-18:00','K1':'10:00-17:36','K2':'10:00-14:00','L':'12:00-20:00','L1':'12:00-19:36','L2':'11:30-19:30','M':'12:30-20:30','M1':'12:30-20:06','N':'13:00-21:00','N1':'13:00-20:36','N2':'13:30-21:30','O':'14:00-22:00','O1':'14:00-21:36','P':'14:30-22:30','P1':'14:30-22:06','Q':'15:00-23:00','Q1':'15:00-22:36','R':'15:30-23:30','R1':'15:30-23:06','S':'16:00-24:00','S1':'16:00-23:36','T':'16:30-24:30','T1':'16:30-24:06','U':'17:00-01:00','U1':'17:00-24:36','V':'17:30-21:30','W':'12:00-18:00','X':'09:30-17:30','Y':'20:00-24:00','Z':'11:00-19:00'};
 
 // ── LANG ──────────────────────────────────────────────────────────
 function t(key){return T[lang][key]||T['pt'][key]||key;}
@@ -477,23 +477,113 @@ function detectMonthFromText(text){
     if(l.includes(m)){const idx=i%12;const y=(text.match(/20\d{2}/)||[new Date().getFullYear()])[0];document.getElementById('scheduleMonth').value=`${y}-${String(idx+1).padStart(2,'0')}`;}
   });
 }
-function parseManualText(){const txt=document.getElementById('manualText').value;if(!txt.trim()){showModal(t('attention'),t('emptyText'));return;}parseScheduleText(txt);showModal('✅',t('processed').replace('{n}',allNames.length));}
+function parseManualText(){const txt=document.getElementById('manualText').value;if(!txt.trim()){showModal(t('attention'),t('emptyText'));return;}parseScheduleText(txt);showModal('\u2705',t('processed').replace('{n}',allNames.length));}
+
+// SHIFT CODES valid set
+const VALID_CODES=new Set(['A','B','B1','C','C1','C2','D','D1','E','E1','F','F1','F2','G','G1','G2','H','H1','I','I1','J','K','K1','K2','L','L1','L2','M','M1','N','N1','N2','O','O1','P','P1','Q','Q1','R','R1','S','S1','T','T1','U','U1','V','W','X','Y','Z','FE','RL','ST','FL','DSR']);
+
+function isShiftCode(s){if(!s)return false;const u=s.trim().toUpperCase();return VALID_CODES.has(u)||/^[A-Z]{1,2}\d?$/.test(u);}
+function isNameLike(s){if(!s||s.trim().length<3)return false;const u=s.trim();// Must have letters, no digits, no single-letter cells
+return /^[A-Z\u00C0-\u024F'\s]{3,}$/.test(u)&&!/^\d/.test(u)&&u.trim().split(/\s+/).length>=1&&!isShiftCode(u)&&u.length>3;}
+
 function parseScheduleText(text){
   rawScheduleData={};allNames=[];
-  const lines=text.split(/\n|\r/).filter(l=>l.trim());
-  let cur=null;
+  // Strategy 1: TABLE FORMAT — "NAME day1code day2code ... day31code"
+  // The PDF text comes as: "01-mar 02-mar ... NOME1 A B C ... NOME2 D E F ..."
+  // We need to find day-header row then parse each name row
+
+  const lines=text.split(/\n|\r/).map(l=>l.trim()).filter(Boolean);
+
+  // Find the day-header line: contains "01" or "01-mar" or "01-jan" etc
+  let dayHeaderIdx=-1;
+  let dayNumbers=[];
   for(let i=0;i<lines.length;i++){
-    const line=lines[i].trim();if(!line)continue;
-    const nm=line.match(/^([A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ][A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ\s]{3,})$/);
-    if(nm&&!hasShiftCodes(line)){cur=nm[1].trim().replace(/\s+/g,' ').toUpperCase();if(!rawScheduleData[cur]){rawScheduleData[cur]={};allNames.push(cur);}continue;}
-    if(cur)parseDayCodesFromLine(line,cur);
+    const tokens=lines[i].split(/\s+/);
+    const dayTokens=tokens.filter(tk=>/^0?[1-9]$|^[12]\d$|^3[01]$/.test(tk)||/^\d{1,2}[-\/](mar|apr|mag|giu|lug|ago|set|ott|nov|dic|gen|feb|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i.test(tk));
+    if(dayTokens.length>=20){// found header row with 20+ day entries
+      dayHeaderIdx=i;
+      dayNumbers=tokens.map(tk=>{const m=tk.match(/^(\d{1,2})/);return m?parseInt(m[1]):null;}).filter(Boolean);
+      break;
+    }
   }
-  const rx=/([A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ][A-Za-záéíóúàâêôãõüç\s]{2,})\s+((?:\d{1,2}\s*[A-Z]{1,2}\d?\s*)+)/g;
-  let m;while((m=rx.exec(text))!==null){const n=m[1].trim().replace(/\s+/g,' ').toUpperCase();if(!rawScheduleData[n]){rawScheduleData[n]={};allNames.push(n);}parseDayCodesFromLine(m[2],n);}
-  allNames=[...new Set(allNames)];renderNameList();saveToHistory();
+
+  if(dayHeaderIdx>=0&&dayNumbers.length>=20){
+    // TABLE MODE: parse rows after header as NAME + codes
+    const numDays=dayNumbers.length;
+    // skip weekday row if present (Dom Lun Mar...)
+    const WD_PATTERN=/^(dom|lun|mar|mer|gio|ven|sab|sun|mon|tue|wed|thu|fri|sat)$/i;
+    let dataStart=dayHeaderIdx+1;
+    if(dataStart<lines.length){
+      const nextTokens=lines[dataStart].split(/\s+/);
+      if(nextTokens.filter(t=>WD_PATTERN.test(t)).length>10) dataStart++;
+    }
+    for(let i=dataStart;i<lines.length;i++){
+      const tokens=lines[i].split(/\s+/).filter(Boolean);
+      if(tokens.length<5)continue;
+      // Re-detect header repetition (skip)
+      const daysInLine=tokens.filter(tk=>/^\d{1,2}[-\/](mar|apr|mag|jan|gen|feb)/i.test(tk));
+      if(daysInLine.length>5)continue;
+      if(tokens.filter(t=>WD_PATTERN.test(t)).length>10)continue;
+      // Skip "MARZO" / month title lines
+      if(tokens.length===1&&/^[A-Z]{4,}$/.test(tokens[0]))continue;
+
+      // Find where name ends and codes begin
+      // Name tokens are all-alpha (possibly accented), code tokens match shift pattern
+      let nameTokens=[];let codeTokens=[];let foundCode=false;
+      for(const tk of tokens){
+        if(!foundCode&&isNameLike(tk)&&!isShiftCode(tk)){nameTokens.push(tk);}
+        else{foundCode=true;codeTokens.push(tk.toUpperCase());}
+      }
+      const name=nameTokens.join(' ').toUpperCase().trim();
+      if(!name||name.length<3)continue;
+      if(codeTokens.length<5)continue;// skip rows with too few codes
+      // Filter out weekday abbrevs that slipped in
+      const cleanCodes=codeTokens.filter(c=>!WD_PATTERN.test(c));
+      if(cleanCodes.length<5)continue;
+      if(!rawScheduleData[name]){rawScheduleData[name]={};allNames.push(name);}
+      cleanCodes.forEach((code,idx)=>{
+        const day=dayNumbers[idx];
+        if(day&&day>=1&&day<=31&&code&&code!=='undefined')rawScheduleData[name][String(day)]=code;
+      });
+    }
+  }
+
+  // Strategy 2: FALLBACK — classic "NAME\n01 A 02 B..." format
+  if(allNames.length===0){
+    let cur=null;
+    for(const line of lines){
+      const tokens=line.split(/\s+/);
+      const allAlpha=tokens.every(tk=>/^[A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇ']+$/.test(tk));
+      const hasDigit=tokens.some(tk=>/^\d{1,2}$/.test(tk));
+      if(allAlpha&&tokens.length>=1&&tokens.join('').length>3&&!hasDigit){
+        cur=line.toUpperCase().trim();
+        if(!rawScheduleData[cur]){rawScheduleData[cur]={};allNames.push(cur);}
+      } else if(cur){
+        parseDayCodesFromLine(line,cur);
+      }
+    }
+  }
+
+  // Strategy 3: INLINE "NAME A B C D..." where codes follow immediately on same line (no day numbers, just sequential)
+  if(allNames.length===0){
+    parseFlatText(text);
+  }
+
+  allNames=[...new Set(allNames)];
+  renderNameList();saveToHistory();
 }
-function hasShiftCodes(l){return/\d{1,2}\s+[A-Z]{1,2}\d?/.test(l);}
+
 function parseDayCodesFromLine(line,name){const p=/(\d{1,2})\s*[-\/]?\s*([A-Z]{1,2}\d?)/g;let m;while((m=p.exec(line))!==null){const d=parseInt(m[1]);if(d>=1&&d<=31)rawScheduleData[name][String(d)]=m[2].toUpperCase();}}
+
+function parseFlatText(text){
+  const rx=/([A-Z\u00C0-\u024F]{2,}(?:\s[A-Z\u00C0-\u024F]{2,})+)\s+((?:[A-Z]{1,2}\d?\s+){5,})/g;
+  let m;while((m=rx.exec(text))!==null){
+    const name=m[1].trim().toUpperCase();
+    const codes=m[2].trim().split(/\s+/);
+    if(!rawScheduleData[name]){rawScheduleData[name]={};allNames.push(name);}
+    codes.forEach((c,i)=>{if(c&&i+1<=31)rawScheduleData[name][String(i+1)]=c.toUpperCase();});
+  }
+}
 
 // ── LEGEND ────────────────────────────────────────────────────────
 function renderLegend(){const g=document.getElementById('legendGrid');g.innerHTML='';Object.entries(legend).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([code,time])=>{const i=document.createElement('div');i.className='legend-item';i.innerHTML=`<span class="legend-code">${code}</span><input class="legend-input" type="text" value="${time}" onchange="legend['${code}']=this.value"><button onclick="deleteLegendItem('${code}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:2px 4px">✕</button>`;g.appendChild(i);});}
